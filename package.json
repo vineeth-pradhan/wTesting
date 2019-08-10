@@ -36,7 +36,8 @@
     "url": "https://github.com/Wandalen/wPathTools/issues"
   },
   "dependencies": {
-    "wTools": ""
+    "wTools": "",
+    "wpathfundamentals": ""
   },
   "devDependencies": {
     "wFiles": "",

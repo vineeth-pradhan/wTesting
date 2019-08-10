@@ -1,9 +1,9 @@
 
 if( typeof module !== 'undefined' )
-require( 'wPathFundamentals' );
-require( 'wFiles' )
+require( '..' /* 'wpathtools' */ );
 var _ = wTools;
 
-var file = '/a/b/c.x'
-var name = _.path.name( file );
-console.log( 'name of ' + file + ' is ' + name );
+var dst = '/dst'
+var src = '/dst'
+var pathMap = _.path.mapExtend( null, dst, src );
+console.log( 'Path map\n', pathMap );

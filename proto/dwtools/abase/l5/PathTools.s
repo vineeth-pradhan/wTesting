@@ -22,8 +22,7 @@ if( typeof module !== 'undefined' )
 
   let _ = require( '../../Tools.s' );
 
-  require( '../l3/PathBasic.s' );
-
+  _.include( 'wPathFundamentals' );
   _.include( 'wStringsExtra' );
 
 }
