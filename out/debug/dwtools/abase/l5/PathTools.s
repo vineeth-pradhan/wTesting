@@ -1158,11 +1158,10 @@ function _mapExtend( o )
     _.assert( dst === undefined || dst === null || _.arrayIs( dst ) || _.strIs( dst ) || _.boolLike( dst ) || _.objectIs( dst ) );
     _.assert( src === null || _.arrayIs( src ) || _.strIs( src ) || _.boolLike( src ) || _.objectIs( src ) );
 
-    // if( src === null ) yyy
     if( src === null || src === '' )
     {
       if( _.boolLike( dst ) )
-      r = o.extending ? '' : dst;
+      r = o.supplementing ? dst : '';
       else
       r = dst || '';
     }
@@ -1170,14 +1169,13 @@ function _mapExtend( o )
     {
       r = src;
     }
-    // else if( dst === undefined || dst === null || dst === true ) yyy
     else if( dst === undefined || dst === null || dst === '' || dst === true )
     {
       r = src;
     }
     else if( _.boolLike( dst ) )
     {
-      r = src;
+      r = o.supplementing ? dst : src;
     }
     else if( _.strIs( dst ) || _.objectIs( dst ) )
     {
@@ -1207,7 +1205,7 @@ _mapExtend.defaults =
   dstPathMap : null,
   srcPathMap : null,
   dstPath : null,
-  extending : 1,
+  supplementing : 0,
 }
 
 //
@@ -1221,7 +1219,7 @@ function mapExtend( dstPathMap, srcPathMap, dstPath )
     dstPathMap,
     srcPathMap,
     dstPath,
-    extending : 1,
+    supplementing : 0,
   });
 }
 
@@ -1240,7 +1238,7 @@ function mapSupplement( dstPathMap, srcPathMap, dstPath )
     dstPathMap,
     srcPathMap,
     dstPath,
-    extending : 0,
+    supplementing : 1,
   });
 }
 
@@ -1620,8 +1618,9 @@ function mapGroupByDst( pathMap )
         }
         else
         {
-          // if( path.begins( src2, path.fromGlob( src ) ) )
-          if( path.begins( path.fromGlob( src ), path.fromGlob( src2 ) ) )
+          let srcBase = path.fromGlob( src );
+          let srcBase2 = path.fromGlob( src2 );
+          if( path.begins( srcBase, srcBase2 ) || path.begins( srcBase2, srcBase ) )
           result[ dst2 ][ src ] = !!dst;
         }
       }

@@ -7020,7 +7020,9 @@ function mapGroupByDst( test )
 {
   let path = _.path;
 
-  test.case = '.';
+  /* */
+
+  test.case = 'trivial';
   var exp =
   {
     '/dir2/Output.js' :
@@ -7034,13 +7036,33 @@ function mapGroupByDst( test )
     '/dir/**' : `/dir2/Output.js`,
     '/dir/Exec' : 0,
   }
-  debugger;
   var got = path.mapGroupByDst( src );
-  debugger;
   test.identical( got, exp );
   test.is( got !== src );
 
-  debugger;
+  /* */
+
+  test.case = 'parent dir';
+  var exp =
+  {
+    '/dst' :
+    {
+      '/src1/d**' : '',
+      '/src2/d/**' : '',
+      '/**/b' : false
+    },
+  }
+  var src =
+  {
+    '/src1/d**' : '/dst',
+    '/src2/d/**' : '/dst',
+    '/**/b' : false
+  }
+  var got = path.mapGroupByDst( src );
+  test.identical( got, exp );
+  test.is( got !== src );
+
+  /* */
 
 }
 
