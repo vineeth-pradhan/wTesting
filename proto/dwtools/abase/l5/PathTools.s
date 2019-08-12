@@ -228,14 +228,16 @@ function filterPairs( filePath, onEach )
 
 function filterPairsInplace( filePath, onEach )
 {
+  let self = this;
+  let hasDst = false;
+  let hasSrc = false;
+  let it = Object.create( null );
+  it.src = '';
+  it.dst = '';
 
   _.assert( arguments.length === 2 );
   _.assert( filePath === null || _.strIs( filePath ) || _.arrayIs( filePath ) || _.mapIs( filePath ) );
   _.routineIs( onEach );
-
-  let it = Object.create( null );
-  it.src = '';
-  it.dst = '';
 
   if( _.strIs( filePath ) || filePath === null )
   {
@@ -311,10 +313,14 @@ function filterPairsInplace( filePath, onEach )
         let r = onEach( it );
         elementsWrite( filePath, it, r );
       }
-
     }
   }
   else _.assert( 0 );
+
+  if( _.mapIs( filePath ) && !hasDst && !hasSrc )
+  {
+    return self.simplifyInplace( filePath );
+  }
 
   return filePath;
 
@@ -322,15 +328,6 @@ function filterPairsInplace( filePath, onEach )
 
   function elementsWrite( filePath, it, elements )
   {
-
-    if( _.arrayIs( elements ) && elements.length === 0 )
-    elements = '';
-
-    if( _.arrayIs( elements ) )
-    {
-      elements.forEach( ( r ) => elementsWrite( filePath, it, r ) );
-      return filePath;
-    }
 
     _.assert( elements === undefined || elements === null || _.strIs( elements ) || _.arrayIs( elements ) || _.mapIs( elements ) );
 
@@ -345,8 +342,11 @@ function filterPairsInplace( filePath, onEach )
 
     if( _.arrayIs( elements ) )
     {
-      elements.forEach( ( src ) => elementWrite( filePath, src, it.dst ) );
-      return result;
+      if( elements.length === 0 )
+      return elementWrite( filePath, '', '' );
+
+      elements.forEach( ( r ) => elementsWrite( filePath, it, r ) );
+      return filePath;
     }
 
     if( _.mapIs( elements ) )
@@ -391,6 +391,12 @@ function filterPairsInplace( filePath, onEach )
     _.assert( _.strIs( dst ) || _.boolLike( dst ) );
 
     filePath[ src ] = _.scalarAppend( filePath[ src ], dst );
+
+    if( src )
+    hasSrc = true;
+
+    if( dst !== '' )
+    hasDst = true;
 
     return filePath;
   }
