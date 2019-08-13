@@ -1264,8 +1264,7 @@ function _mapExtend( o )
         if( key !== '' )
         used = true;
         if( o.mode === 'append' )
-        r = _.scalarAppend( dst, src );
-        // r = _.scalarAppendOnce( dst, src );  // Dmytro : routine scalarAppendOnce does not exists
+        r = _.scalarAppendOnce( dst, src );  // Dmytro : routine scalarAppendOnce does not exists
         else
         r = _.scalarPrependOnce( dst, src );
       }
