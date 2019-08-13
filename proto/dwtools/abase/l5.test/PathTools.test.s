@@ -10126,129 +10126,136 @@ function mapsPair( test )
 {
   let path = _.path;
 
-  // test.case = 'dst=null, src=null';
-  // var exp = null;
-  // var dst = null;
-  // var src = null;
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  //
-  // test.case = 'src=null, dst=dot to null';
-  // var exp = null;
-  // var dst = { '.' : null };
-  // var src = null;
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  //
-  // test.case = 'dst=null, src=dot to null';
-  // var exp = null;
-  // var dst = null;
-  // var src = { '.' : null };
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  //
-  // test.case = 'src=null, dst=empty to null';
-  // var exp = null;
-  // var dst = { '' : null };
-  // var src = null;
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  //
-  // test.case = 'dst=null, src=empty to null';
-  // var exp = null;
-  // var dst = null;
-  // var src = { '' : null };
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  //
-  // test.case = 'src=null, dst=empty to empty';
-  // var exp = null;
-  // var dst = { '' : '' };
-  // var src = null;
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  //
-  // test.case = 'dst=null, src=empty to empty';
-  // var exp = null;
-  // var dst = null;
-  // var src = { '' : '' };
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  //
-  // test.case = 'dst=str, src=null';
-  // var exp = { '' : 'dir' };
-  // var dst = 'dir';
-  // var src = null;
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  // test.is( got !== dst );
-  // test.is( got !== src );
-  //
-  // test.case = 'dst=null, src=str';
-  // var exp = { 'dir' : null };
-  // var dst = null;
-  // var src = 'dir';
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  // test.is( got !== dst );
-  // test.is( got !== src );
-  //
-  // test.case = 'dst=str, src=map with some str and null in dst';
-  // var exp = { 'c' : 'c2', 'd' : 'dir' };
-  // var dst = 'dir';
-  // var src = { 'c' : 'c2', 'd' : null };
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  // test.is( got !== dst );
-  // test.is( got !== src );
-  //
-  // test.case = 'dst=str, src=dot to null';
-  // var exp = { '.' : '/a/dst/file' }
-  // var dst = '/a/dst/file';
-  // var src = { '.' : null }
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  // test.is( got !== dst );
-  // test.is( got !== src );
-  //
-  // test.case = 'dst=dot, src=map';
-  // var exp = { 'c' : 'c2', 'd' : '.' }
-  // var dst = '.';
-  // var src = { 'c' : 'c2', 'd' : null }
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  // test.is( got !== dst );
-  // test.is( got !== src );
-  //
-  // test.case = 'dst=map with src=dot and dst=null, dst=map with src=dot and dst=null';
-  // var exp = { '.' : null }
-  // var dst = { '.' : null }
-  // var src = { '.' : null }
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  // test.is( got !== dst );
-  // test.is( got !== src );
-  //
-  // test.case = 'dst=map with src=dot and dst=null, dst=map with src=dot and dst=null';
-  // var exp = { '/src' : '/dst' }
-  // var dst = { '/src' : '/dst' }
-  // var src = '/src'
-  // var got = path.mapsPair( dst, src );
-  // test.identical( got, exp );
-  // test.is( got !== dst );
-  // test.is( got !== src );
-
-  test.case = 'dst=map with src=string, dst=empty and dst=string';
+  test.case = 'dst=map with src=string, dst=string and src=string';
   var exp = { '/src' : '/dst' }
-  var dst = { "" : "/dst" }
+  var dst = { '/src' : '/dst' }
   var src = "/src";
-  debugger;
   var got = path.mapsPair( dst, src );
   test.identical( got, exp );
   test.is( got !== dst );
   test.is( got !== src );
 
-  debugger;
+  test.case = 'dst=null, src=null';
+  var exp = null;
+  var dst = null;
+  var src = null;
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+
+  test.case = 'src=null, dst=dot to null';
+  var exp = null;
+  var dst = { '.' : null };
+  var src = null;
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+
+  test.case = 'dst=null, src=dot to null';
+  var exp = null;
+  var dst = null;
+  var src = { '.' : null };
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+
+  test.case = 'src=null, dst=empty to null';
+  var exp = null;
+  var dst = { '' : null };
+  var src = null;
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+
+  test.case = 'dst=null, src=empty to null';
+  var exp = null;
+  var dst = null;
+  var src = { '' : null };
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+
+  test.case = 'src=null, dst=empty to empty';
+  var exp = null;
+  var dst = { '' : '' };
+  var src = null;
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+
+  test.case = 'dst=null, src=empty to empty';
+  var exp = null;
+  var dst = null;
+  var src = { '' : '' };
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+
+  test.case = 'dst=str, src=null';
+  var exp = { '' : 'dir' };
+  var dst = 'dir';
+  var src = null;
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
+  test.case = 'dst=null, src=str';
+  var exp = { 'dir' : '' };
+  var dst = null;
+  var src = 'dir';
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
+  test.case = 'dst=str, src=map with some str and null in dst';
+  var exp = { 'c' : 'c2', 'd' : 'dir' };
+  var dst = 'dir';
+  var src = { 'c' : 'c2', 'd' : null };
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
+  test.case = 'dst=str, src=dot to null';
+  var exp = { '.' : '/a/dst/file' }
+  var dst = '/a/dst/file';
+  var src = { '.' : null }
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
+  test.case = 'dst=dot, src=map';
+  var exp = { 'c' : 'c2', 'd' : '.' }
+  var dst = '.';
+  var src = { 'c' : 'c2', 'd' : null }
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
+  test.case = 'dst=map with src=dot and dst=null, dst=map with src=dot and dst=null';
+  var exp = { '.' : '' }
+  var dst = { '.' : null }
+  var src = { '.' : null }
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
+  test.case = 'dst=map with src=dot and dst=null, dst=map with src=dot and dst=null';
+  var exp = { '/src' : '/dst' }
+  var dst = { '/src' : '/dst' }
+  var src = '/src'
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
+  test.case = 'dst=map with src=string, dst=empty and dst=string';
+  var exp = { '/src' : '/dst' }
+  var dst = { "" : "/dst" }
+  var src = "/src";
+  var got = path.mapsPair( dst, src );
+  test.identical( got, exp );
+  test.is( got !== dst );
+  test.is( got !== src );
+
 }
 
 //
