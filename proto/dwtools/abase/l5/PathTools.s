@@ -388,7 +388,7 @@ function filterPairsInplace( filePath, onEach )
     src = '';
 
     _.assert( _.strIs( src ) );
-    _.assert( _.strIs( dst ) || _.boolLike( dst ) );
+    _.assert( _.strIs( dst ) || _.boolLike( dst ) || _.instanceIs( dst ) );
 
     filePath[ src ] = _.scalarAppend( filePath[ src ], dst );
 
