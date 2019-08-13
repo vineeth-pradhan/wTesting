@@ -6161,18 +6161,42 @@ function mapExtend( test )
 
   test.open( 'no dstPath' )
 
-  test.case = 'simple';
-  var expected = { '/One' : false, '/EmptyString1' : '/dst', '/EmptyString2' : '/dst', '/Null1' : '/dst', '/Null2' : '/dst' }
+  test.case = 'no orphan';
+  var expected = { '/One' : false, '/Str' : 'str', '/EmptyString1' : '', '/EmptyString2' : '', '/Null1' : '', '/Null2' : '' }
   var dst = { '/One' : 1, '/EmptyString1' : '', '/Null1' : null }
-  var src = { '/One' : 0, '/EmptyString2' : '', '/Null2' : null, '' : '/dst' }
+  var src = { '/One' : 0, '/Str' : 'str', '/EmptyString2' : '', '/Null2' : null }
   var got = path.mapExtend( dst, src );
   test.identical( got, expected );
   test.is( got === dst );
 
-  test.case = 'no orphan';
-  var expected = { '/One' : false, '/Zero' : true, '/True' : true, '/False' : true, '/Null' : true, '/String1' : true, '/String2' : true, '/Array' : true, '/Object' : true, '/EmptyString1' : '', '/EmptyString2' : '', '/EmptyArray1' : '', '/EmptyArray2' : '', '/EmptyArray3' : '' }
-  var dst = { '/One' : 1, '/Zero' : 0, '/True' : true, '/False' : false, '/Null' : null, '/String1' : '/dir1', '/String2' : '/dir2', '/EmptyString1' : '', '/EmptyArray1' : [], '/EmptyArray2' : [ '', '' ], '/EmptyArray3' : [ null, null ], '/Array' : [ '/dir1', '/dir2' ], '/Object' : obj1 }
-  var src = { '/One' : 0, '/Zero' : 1, '/True' : true, '/False' : true, '/Null' : true, '/String1' : true, '/String2' : true, '/Array' : true, '/Object' : true, '/EmptyString2' : '', '/EmptyArray1' : [ '' ], '/EmptyArray2' : [], '/EmptyArray3' : [ null ] }
+  test.case = 'dst has orphan';
+  var expected = { '/One' : false, '/Str' : 'str', '/EmptyString1' : '/dst', '/EmptyString2' : '/dst', '/Null1' : '/dst', '/Null2' : '/dst' }
+  var dst = { '/One' : 1, '/EmptyString1' : '', '/Null1' : null, '' : '/dst' }
+  var src = { '/One' : 0, '/Str' : 'str', '/EmptyString2' : '', '/Null2' : null }
+  var got = path.mapExtend( dst, src );
+  test.identical( got, expected );
+  test.is( got === dst );
+
+  test.case = 'src has orphan';
+  var expected = { '/One' : false, '/Str' : 'str', '/EmptyString1' : '/dst', '/EmptyString2' : '/dst', '/Null1' : '/dst', '/Null2' : '/dst' }
+  var dst = { '/One' : 1, '/EmptyString1' : '', '/Null1' : null }
+  var src = { '/One' : 0, '/Str' : 'str', '/EmptyString2' : '', '/Null2' : null, '' : '/dst' }
+  var got = path.mapExtend( dst, src );
+  test.identical( got, expected );
+  test.is( got === dst );
+
+  test.case = 'dst has orphan, no place for it';
+  var expected = { '/One' : false, '' : '/dst' }
+  var dst = { '/One' : 1, '' : '/dst' }
+  var src = { '/One' : 0 }
+  var got = path.mapExtend( dst, src );
+  test.identical( got, expected );
+  test.is( got === dst );
+
+  test.case = 'src has orphan, no place for it';
+  var expected = { '/One' : false, '' : '/dst' }
+  var dst = { '/One' : 1, }
+  var src = { '/One' : 0, '' : '/dst' }
   var got = path.mapExtend( dst, src );
   test.identical( got, expected );
   test.is( got === dst );
