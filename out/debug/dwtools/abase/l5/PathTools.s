@@ -1427,7 +1427,7 @@ function mapsPair( dstFilePath, srcFilePath )
     else if( _.mapIs( dstFilePath ) )
     srcFilePath = dstFilePath = self.mapExtend( null, dstFilePath, null );
     else
-    srcFilePath = dstFilePath = self.mapExtend( null, '', dstFilePath ); // yyy
+    srcFilePath = dstFilePath = self.mapExtend( null, { '' : dstFilePath }, dstFilePath ); // yyy
   }
   else
   {
