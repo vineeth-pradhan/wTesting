@@ -10138,6 +10138,16 @@ function mapSupplement( test )
 
 }
 
+function mapSupplementExperiment( test )
+{
+  var src = { '/One' : true };
+  var dst = { '/dir' : null, '/temp' : '', '/dir2' : 'test' };
+  var expected = { '/dir' : null, '/temp' : '', '/dir2' : 'test' , '/One' : true };
+  var got = _.path.mapExtend( dst, src, true );
+  test.identical( got, expected );
+}
+mapSupplementExperiment.experimental = 1;
+
 //
 
 function mapsPair( test )
@@ -10807,6 +10817,7 @@ var Self =
 
     mapExtend,
     mapSupplement,
+    mapSupplementExperiment,
     mapsPair,
     simplify,
     simplifyInplace,
