@@ -1003,7 +1003,7 @@ function _mapExtend( o )
 
   if( removing )
   dstPathMapRemove( o.dstPathMap, o.dstPath );
-  else
+  else if( o.srcPathMap !== '' )
   used = dstPathMapExtend( o.dstPathMap, o.srcPathMap, o.dstPath ) || used;
 
   if( used && o.dstPathMap[ '' ] === o.dstPath )
