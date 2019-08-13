@@ -7016,6 +7016,24 @@ function mapExtend( test )
   let obj1 = new constr( 1 );
   let obj2 = new constr( 2 );
 
+  /* xxx */
+
+  test.case = 'temp';
+  var expected = { '/src' : '/dst' };
+  var dstMap = { '/src' : '/dst' };
+  var srcMap = null;
+  var dstPath = '/dst2';
+  var got = path.mapExtend( dstMap, srcMap, dstPath );
+  test.identical( got, expected );
+
+  test.case = 'temp';
+  var expected = { '/src' : '/dst', '' : '/dst3' };
+  var dstMap = { '/src' : '/dst' };
+  var srcMap = { '' : '/dst3' };
+  var dstPath = '/dst2';
+  var got = path.mapExtend( dstMap, srcMap, dstPath );
+  test.identical( got, expected );
+
   /* - */
 
   test.case = 'dstMap=null, srcMap=null, dstPath=undefined';
@@ -7200,7 +7218,7 @@ function mapExtend( test )
   test.identical( got, expected );
 
   test.case = 'dstMap=null, srcMap=null, dstPath=str';
-  var expected = { '' : '/dst' }
+  var expected = {}
   var dstMap = null;
   var srcMap = null;
   var dstPath = '/dst';
@@ -7208,7 +7226,7 @@ function mapExtend( test )
   test.identical( got, expected );
 
   test.case = 'dstMap=null, srcMap=null in arr, dstPath=str';
-  var expected = { '' : '/dst' }
+  var expected = {}
   var dstMap = null;
   var srcMap = [ null ];
   var dstPath = '/dst';
@@ -7328,7 +7346,7 @@ function mapExtend( test )
 
   test.case = 'dstMap=map with empty src, srcMap=null, dstPath=str';
   var expected = { "" : "/dst2" };
-  var dstMap = { "" : "/dst" };
+  var dstMap = { "" : "/dst2" };
   var srcMap = null;
   var dstPath = '/dst2';
   var got = path.mapExtend( dstMap, srcMap, dstPath );
@@ -8288,7 +8306,7 @@ function mapExtend( test )
   test.is( got === dst );
 
   test.case = 'src:null, only bools';
-  var expected = { '/wasTrue' : true, '/wasFalse' : false, '' : [ '/dir1', '/dir2' ] }
+  var expected = { '/wasTrue' : true, '/wasFalse' : false }
   var dst = { '/wasTrue' : true, '/wasFalse' : false }
   var got = path.mapExtend( dst, null, [ '/dir1', '/dir2' ] );
   test.identical( got, expected );
