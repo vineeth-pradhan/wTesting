@@ -7631,6 +7631,104 @@ function mapGroupByDst( test )
 
 }
 
+//
+
+function group( test )
+{ 
+  test.case = 'nothing common';
+  var o = 
+  {
+    keys : [ '.' ],
+    vals : [ 'a', 'b', 'a/b' ]
+  }
+  var expected = 
+  { 
+    '/' : [ ], 
+    '.' : [ ] 
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+  
+  test.case = 'single key as string';
+  var o = 
+  {
+    keys : '/a',
+    vals : [ '.', '/a', '/b', './a', '/a/b' ]
+  }
+  var expected = 
+  {
+    '/' : [ '/a', '/b', '/a/b' ], 
+    '/a' : [ '/a', '/a/b' ]
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+  
+  test.case = 'single key in array';
+  var o = 
+  {
+    keys : [ '/a' ],
+    vals : [ '.', '/a', '/b', './a', '/a/b' ]
+  }
+  var expected = 
+  {
+    '/' : [ '/a', '/b', '/a/b' ], 
+    '/a' : [ '/a', '/a/b' ]
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+  
+  test.case = 'severals keys';
+  var o = 
+  {
+    keys : [ '/a', '/b', '.' ],
+    vals : [ '.', '/a', '/b', './a', '/a/b' ]
+  }
+  var expected = 
+  {
+    '/' : [ '/a', '/b', '/a/b' ], 
+    '/a' : [ '/a', '/a/b' ], 
+    '/b' : [ '/b' ], 
+    '.' : [ '.', './a' ]
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+  
+  test.case = 'vals has inner arrays';
+  var o = 
+  {
+    keys : [ '/' ],
+    vals : [ '.', [ '/a', '/b' ], [ './a', '/a/b' ] ]
+  }
+  var expected = 
+  {
+    '/' : [ '/a', '/b', '/a/b' ], 
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+  
+  test.case = 'result is existing map'
+  var o = 
+  {
+    keys : [ '/' ],
+    vals : [ '/a' ],
+    result : 
+    {
+      '/' : [ '/y' ]
+    }
+  }
+  var expected = 
+  {
+    '/' : [ '/y', '/a' ], 
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+  
+  if( !Config.debug )
+  return;
+  
+  test.shouldThrowErrorSync( () => _.path.group({ vals : '/val', keys : '/' }))
+}
+
 // --
 // declare
 // --
@@ -7659,6 +7757,8 @@ var Self =
     simplifyInplace,
     mapDstFromDst,
     mapGroupByDst,
+    
+    group,
 
   },
 
