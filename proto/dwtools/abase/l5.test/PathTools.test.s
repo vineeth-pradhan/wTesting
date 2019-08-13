@@ -5820,6 +5820,24 @@ function mapExtend( test )
   test.identical( got, expected );
   test.is( got === dstMap );
 
+  test.case = 'dstMap=map, srcMap=str, dstPath=str, rewrite';
+  var expected = { '/src1' : '/dst2', '/src2' : '/dst1' };
+  var dstMap = { '/src1' : '/dst1', '/src2' : '/dst1' };
+  var srcMap = '/src1';
+  var dstPath = '/dst2';
+  var got = path.mapExtend( dstMap, srcMap, dstPath );
+  test.identical( got, expected );
+  test.is( got === dstMap );
+
+  test.case = 'dstMap=map, srcMap=map, dstPath=str, rewrite';
+  var expected = { '/src1' : '/dst2', '/src2' : '/dst3' };
+  var dstMap = { '/src1' : '/dst1', '/src2' : '/dst1' };
+  var srcMap = { '/src1' : null, '/src2' : '/dst3' };
+  var dstPath = '/dst2';
+  var got = path.mapExtend( dstMap, srcMap, dstPath );
+  test.identical( got, expected );
+  test.is( got === dstMap );
+
   test.case = 'dstMap=map, srcMap=null, dstPath=str';
   var expected = { '/src1' : '/dst', '/src2' : '/dst' };
   var dstMap = { '/src1' : null, '/src2' : '' };
