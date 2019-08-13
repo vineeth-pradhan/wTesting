@@ -1114,7 +1114,7 @@ function _mapExtend( o )
     }
     else if( _.mapIs( dstPathMap ) )
     {
-      if( o.srcPathMap === null || o.srcPathMap === '' || o.dstPath === '' )
+      // if( o.srcPathMap === null || o.srcPathMap === '' || o.dstPath === '' )
       for( let f in dstPathMap )
       {
         let val = dstPathMap[ f ];
@@ -1128,12 +1128,12 @@ function _mapExtend( o )
           dstPathMap[ f ] = !!val;
         }
       }
-      else for( let f in dstPathMap )
-      {
-        let val = dstPathMap[ f ];
-        if( _.boolLike( val ) )
-        dstPathMap[ f ] = !!val;
-      }
+      // else for( let f in dstPathMap )
+      // {
+      //   let val = dstPathMap[ f ];
+      //   if( _.boolLike( val ) )
+      //   dstPathMap[ f ] = !!val;
+      // }
 
     }
 

@@ -5838,6 +5838,15 @@ function mapExtend( test )
   test.identical( got, expected );
   test.is( got === dstMap );
 
+  test.case = 'dstMap=map, srcMap=map, dstPath=str, rewrite';
+  var expected = { '/src1' : '/dst2', '/src2' : '/dst3' };
+  var dstMap = { '/src1' : '/dst1', '/src2' : '/dst1' };
+  var srcMap = { '/src1' : null, '/src2' : '/dst3' };
+  var dstPath = '/dst2';
+  var got = path.mapExtend( dstMap, srcMap, dstPath );
+  test.identical( got, expected );
+  test.is( got === dstMap );
+
   test.case = 'dstMap=map, srcMap=null, dstPath=str';
   var expected = { '/src1' : '/dst', '/src2' : '/dst' };
   var dstMap = { '/src1' : null, '/src2' : '' };
@@ -5857,7 +5866,7 @@ function mapExtend( test )
   test.is( got === dstMap );
 
   test.case = 'dstMap=map with empty src, srcMap=null, dstPath=null';
-  var expected = {};
+  var expected = { "" : "/dst" };
   var dstMap = { "" : "/dst" };
   var srcMap = null;
   var dstPath = null;
@@ -5866,7 +5875,7 @@ function mapExtend( test )
   test.is( got === dstMap );
 
   test.case = 'dstMap=map with empty src, srcMap=empty, dstPath=null';
-  var expected = {};
+  var expected = { "" : "/dst" };
   var dstMap = { "" : "/dst" };
   var srcMap = '';
   var dstPath = null;
@@ -5911,7 +5920,7 @@ function mapExtend( test )
   test.is( got === dstMap );
 
   test.case = 'dstMap=map with empty src, srcMap=empty str, dstPath=null';
-  var expected = {};
+  var expected = { "" : "/dst" };
   var dstMap = { "" : "/dst" };
   var srcMap = '';
   var dstPath = null;
@@ -5920,7 +5929,7 @@ function mapExtend( test )
   test.is( got === dstMap );
 
   test.case = 'dstMap=map with empty src, srcMap=empty str, dstPath=empty str';
-  var expected = {};
+  var expected = { "" : "/dst" };
   var dstMap = { "" : "/dst" };
   var srcMap = '';
   var dstPath = '';
@@ -6147,6 +6156,28 @@ function mapExtend( test )
   test.identical( got, expected );
 
   test.close( 'dst:string' );
+
+  /* */
+
+  test.open( 'no dstPath' )
+
+  test.case = 'simple';
+  var expected = { '/One' : false, '/EmptyString1' : '/dst', '/EmptyString2' : '/dst', '/Null1' : '/dst', '/Null2' : '/dst' }
+  var dst = { '/One' : 1, '/EmptyString1' : '', '/Null1' : null }
+  var src = { '/One' : 0, '/EmptyString2' : '', '/Null2' : null, '' : '/dst' }
+  var got = path.mapExtend( dst, src );
+  test.identical( got, expected );
+  test.is( got === dst );
+
+  test.case = 'no orphan';
+  var expected = { '/One' : false, '/Zero' : true, '/True' : true, '/False' : true, '/Null' : true, '/String1' : true, '/String2' : true, '/Array' : true, '/Object' : true, '/EmptyString1' : '', '/EmptyString2' : '', '/EmptyArray1' : '', '/EmptyArray2' : '', '/EmptyArray3' : '' }
+  var dst = { '/One' : 1, '/Zero' : 0, '/True' : true, '/False' : false, '/Null' : null, '/String1' : '/dir1', '/String2' : '/dir2', '/EmptyString1' : '', '/EmptyArray1' : [], '/EmptyArray2' : [ '', '' ], '/EmptyArray3' : [ null, null ], '/Array' : [ '/dir1', '/dir2' ], '/Object' : obj1 }
+  var src = { '/One' : 0, '/Zero' : 1, '/True' : true, '/False' : true, '/Null' : true, '/String1' : true, '/String2' : true, '/Array' : true, '/Object' : true, '/EmptyString2' : '', '/EmptyArray1' : [ '' ], '/EmptyArray2' : [], '/EmptyArray3' : [ null ] }
+  var got = path.mapExtend( dst, src );
+  test.identical( got, expected );
+  test.is( got === dst );
+
+  test.open( 'no dstPath' )
 
   /* */
 
