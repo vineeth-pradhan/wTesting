@@ -975,31 +975,41 @@ qqq : add support of hashes for mapExtend, extend tests
 function _mapExtend( o )
 {
   let self = this;
+  let used = false;
 
   _.routineOptions( _mapExtend, arguments );
   _.assert( o.dstPathMap === null || _.strIs( o.dstPathMap ) || _.arrayIs( o.dstPathMap ) || _.mapIs( o.dstPathMap ) );
   _.assert( !_.mapIs( o.dstPath ) );
+  _.assert( _.arrayHas( [ 'replace', 'append', 'prepend' ], o.mode ) );
 
-  /* normalize dstPath */
+  let removing = o.srcPathMap === '' || o.srcPathMap === null;
+  removing = false; /* off the feature */
 
   o.dstPath = dstPathNormalize( o.dstPath );
-
-  /* normalize dstPathMap */
-
-  o.dstPathMap = dstPathMapNormalize( o.dstPathMap );
-  _.assert( _.mapIs( o.dstPathMap ) );
-
-  /* normalize srcPathMap */
-
-  if( o.srcPathMap === null )
-  if( o.dstPath === null )
-  return o.dstPathMap;
-
   o.srcPathMap = srcPathMapNormalize( o.srcPathMap );
 
-  /* extend dstPathMap by srcPathMap */
+  if( o.supplementing )
+  {
+    getDstPathFromSrcMap();
+    getDstPathFromDstMap();
+  }
+  else
+  {
+    getDstPathFromDstMap();
+    getDstPathFromSrcMap();
+  }
 
-  dstPathMapExtend( o.dstPathMap, o.srcPathMap, o.dstPath );
+  [ o.dstPathMap, used ] = dstPathMapNormalize( o.dstPathMap );
+
+  if( removing )
+  dstPathMapRemove( o.dstPathMap, o.dstPath );
+  else
+  used = dstPathMapExtend( o.dstPathMap, o.srcPathMap, o.dstPath ) || used;
+
+  if( used && o.dstPathMap[ '' ] === o.dstPath )
+  {
+    delete o.dstPathMap[ '' ];
+  }
 
   /* */
 
@@ -1009,19 +1019,56 @@ function _mapExtend( o )
 
   function dstPathNormalize( dstPath )
   {
-    if( _.boolLike( dstPath ) )
-    dstPath = !!dstPath;
-    if( _.arrayIs( dstPath ) && dstPath.length === 1 )
-    dstPath = dstPath[ 0 ];
-    if( dstPath === undefined || dstPath === null )
-    dstPath = '';
+    dstPath = self.simplify( dstPath );
     return dstPath;
+  }
+
+  /* */
+
+  function srcPathMapNormalize( srcPathMap )
+  {
+    srcPathMap = self.simplify( srcPathMap );
+    return srcPathMap;
+  }
+
+  /* */
+
+  function getDstPathFromDstMap()
+  {
+
+    if( o.dstPath === null || o.dstPath === '' )
+    if( _.mapIs( o.dstPathMap ) )
+    if( o.dstPathMap[ '' ] !== undefined && o.dstPathMap[ '' ] !== null && o.dstPathMap[ '' ] !== '' )
+    if( o.srcPathMap !== '' )
+    if( o.dstPath !== o.dstPathMap[ '' ] )
+    {
+      o.dstPath = o.dstPathMap[ '' ];
+      used = false;
+    }
+
+  }
+
+  /* */
+
+  function getDstPathFromSrcMap()
+  {
+
+    if( o.dstPath === null || o.dstPath === '' )
+    if( _.mapIs( o.srcPathMap ) )
+    if( o.srcPathMap[ '' ] !== undefined && o.srcPathMap[ '' ] !== null && o.srcPathMap[ '' ] !== '' )
+    if( o.dstPath !== o.srcPathMap[ '' ] )
+    {
+      o.dstPath = o.srcPathMap[ '' ];
+      used = false;
+    }
+
   }
 
   /* */
 
   function dstPathMapNormalize( dstPathMap )
   {
+    let used = false;
 
     if( dstPathMap === null )
     {
@@ -1031,156 +1078,202 @@ function _mapExtend( o )
     {
       let originalDstPath = dstPathMap;
       dstPathMap = Object.create( null );
-      dstPathMap[ originalDstPath ] = o.dstPath;
+      if( originalDstPath !== '' || ( o.dstPath !== null && o.dstPath !== '' ) )
+      {
+        dstPathMap[ originalDstPath ] = o.dstPath;
+        if( originalDstPath !== '' )
+        used = true;
+      }
     }
     else if( _.arrayIs( dstPathMap ) )
     {
       let originalDstPath = dstPathMap;
       dstPathMap = Object.create( null );
-      originalDstPath.forEach( ( p ) => dstPathMap[ p ] = o.dstPath );
+      originalDstPath.forEach( ( p ) =>
+      {
+        dstPathMap[ p ] = o.dstPath;
+        used = true;
+      });
     }
     else if( _.mapIs( dstPathMap ) )
     {
-      if( o.srcPathMap === null || o.srcPathMap === '' ) // yyy
+      // if( o.srcPathMap === null || o.srcPathMap === '' || o.dstPath === '' )
       for( let f in dstPathMap )
       {
         let val = dstPathMap[ f ];
-        if( val === null || val === '' ) // yyy
-        dstPathMap[ f ] = o.dstPath;
+        if( val === null || val === '' )
+        {
+          dstPathMap[ f ] = o.dstPath;
+          used = true;
+        }
+        else if( _.boolLike( val ) )
+        {
+          dstPathMap[ f ] = !!val;
+        }
       }
-    }
+      // else for( let f in dstPathMap )
+      // {
+      //   let val = dstPathMap[ f ];
+      //   if( _.boolLike( val ) )
+      //   dstPathMap[ f ] = !!val;
+      // }
 
-    /* remove . : null if map was dot-map */
-    if( o.srcPathMap )
-    if( !_.mapIs( o.srcPathMap ) || ( _.mapIs( o.srcPathMap ) && _.mapKeys( o.srcPathMap ).length ) )
-    if( _.mapKeys( dstPathMap ).length === 1 )
-    {
-      if( dstPathMap[ '.' ] === null || dstPathMap[ '.' ] === '' ) // xxx
-      delete dstPathMap[ '.' ];
-      else if( dstPathMap[ '' ] === '' || dstPathMap[ '' ] === null ) // xxx
-      delete dstPathMap[ '' ];
     }
 
     /* get dstPath from dstPathMap if it has empty key */
 
-    if( dstPathMap[ '' ] !== undefined )
+    // if( dstPathMap[ '' ] !== undefined && o.srcPathMap !== '' )
+    // if( o.dstPath === null || o.dstPath === '' )
+    // if( o.dstPath !== dstPathMap[ '' ] )
+    // {
+    //   o.dstPath = dstPathMap[ '' ];
+    //   used = false;
+    // }
+
+    if( dstPathMap[ '' ] === '' || dstPathMap[ '' ] === null )
     {
-      if( o.dstPath === null || o.dstPath === '' )
-      {
-        o.dstPath = dstPathMap[ '' ];
-        delete dstPathMap[ '' ];
-      }
-      else
-      {
-        // debugger; xxx
-      }
+      delete dstPathMap[ '' ];
     }
 
-    return dstPathMap;
+    _.assert( _.mapIs( dstPathMap ) );
+    return [ dstPathMap, used ];
   }
 
   /* */
 
-  function srcPathMapNormalize( srcPathMap )
+  function dstPathMapRemove( dstPathMap, dstPath )
   {
-    if( srcPathMap === null )
-    srcPathMap = '';
-    return srcPathMap;
+    if( dstPath !== '' && _.mapKeys( dstPathMap ).length === 0 )
+    {
+      dstPathMap[ '' ] = dstPath;
+    }
+    else for( let src in dstPathMap )
+    {
+      dstPathMap[ src ] = dstPath;
+      if( src === '' && dstPath === '' )
+      delete dstPathMap[ '' ];
+    }
   }
 
   /* */
 
-  function dstPathMapExtend( dstPathMap, srcPathMap, dstPath )
+  function dstPathMapExtend( dstPathMap, srcPathMap, dstPath, wasUsed )
   {
+    let used = false;
 
     if( _.strIs( srcPathMap ) )
     {
-      if( srcPathMap || _.mapKeys( dstPathMap ).length === 0 )
-      {
-        srcPathMap = self.normalize( srcPathMap );
-        let dst = dstJoin( dstPathMap[ srcPathMap ], dstPath );
-        if( srcPathMap !== '' || dst !== '' )
-        dstPathMap[ srcPathMap ] = dst;
-      }
-      else
-      {
-        for( let src in dstPathMap )
-        {
-          if( dstPathMap[ src ] === null || dstPathMap[ src ] === '' )
-          dstPathMap[ src ] = dstPath;
-        }
-      }
+      let dst;
+      srcPathMap = self.normalize( srcPathMap );
+      [ dst, used ] = dstJoin( dstPathMap[ srcPathMap ], dstPath, srcPathMap );
+      if( srcPathMap !== '' || dst !== '' )
+      dstPathMap[ srcPathMap ] = dst;
     }
     else if( _.mapIs( srcPathMap ) )
     {
       for( let g in srcPathMap )
       {
-        let val = srcPathMap[ g ];
+        let dstPath2 = srcPathMap[ g ];
+        let tryingToUse = false;
 
-        if( ( val === null ) || ( val === '' ) )
-        val = dstPath;
+        dstPath2 = dstPathNormalize( dstPath2 );
 
-        self.mapExtend( dstPathMap, g, val );
+        if( ( dstPath2 === null ) || ( dstPath2 === '' ) )
+        {
+          dstPath2 = dstPath;
+          tryingToUse = true;
+        }
+
+        if( tryingToUse )
+        used = dstPathMapExtend( dstPathMap, g, dstPath2 ) || used;
+        else
+        dstPathMapExtend( dstPathMap, g, dstPath2 );
       }
     }
     else if( _.arrayLike( srcPathMap ) )
     {
       for( let g = 0 ; g < srcPathMap.length ; g++ )
-      self.mapExtend( dstPathMap, srcPathMap[ g ], dstPath );
+      {
+        let srcPathMap2 = srcPathMap[ g ];
+        srcPathMap2 = srcPathMapNormalize( srcPathMap2 );
+        used = dstPathMapExtend( dstPathMap, srcPathMap2, dstPath ) || used;
+      }
     }
-    else _.assert( 0, 'Expects srcPathMap' );
+    else _.assert( 0, () => 'Expects srcPathMap, got ' + _.strType( srcPathMap ) );
 
+    return used;
   }
 
   /* */
 
-  function dstJoin( dst, src )
+  function dstJoin( dst, src, key )
   {
+    let used = false;
     let r;
 
-    _.assert( dst === undefined || dst === null || _.arrayIs( dst ) || _.strIs( dst ) || _.boolLike( dst ) || _.objectIs( dst ) );
-    _.assert( src === null || _.arrayIs( src ) || _.strIs( src ) || _.boolLike( src ) || _.objectIs( src ) );
+    if( _.boolLike( src ) )
+    src = !!src;
 
-    // if( src === null ) yyy
-    if( src === null || src === '' )
+    _.assert( dst === undefined || dst === null || _.arrayIs( dst ) || _.strIs( dst ) || _.boolIs( dst ) || _.objectIs( dst ) );
+    _.assert( src === null || _.arrayIs( src ) || _.strIs( src ) || _.boolIs( src ) || _.objectIs( src ) );
+
+    if( o.mode === 'replace' )
     {
-      if( _.boolLike( dst ) )
-      r = o.extending ? '' : dst;
+      if( o.supplementing )
+      {
+        r = dst;
+        if( dst === undefined || dst === null || dst === '' )
+        {
+          r = src;
+          if( key !== '' )
+          used = true;
+        }
+      }
       else
-      r = dst || '';
+      {
+        if( key !== '' )
+        used = true;
+        r = src;
+      }
     }
-    else if( src === false )
+    else
     {
-      r = src;
-    }
-    // else if( dst === undefined || dst === null || dst === true ) yyy
-    else if( dst === undefined || dst === null || dst === '' || dst === true )
-    {
-      r = src;
-    }
-    else if( _.boolLike( dst ) )
-    {
-      r = src;
-    }
-    else if( _.strIs( dst ) || _.objectIs( dst ) )
-    {
-      r = _.arrayAppendArraysOnce( [], [ dst, src ] );
-    }
-    else if( _.arrayIs( dst ) )
-    {
-      r = _.arrayAppendArraysOnce( [], [ dst, src ] );
-    }
-    else _.assert( 0 );
+      r = dst;
 
-    if( _.arrayIs( r ) )
-    {
-      if( r.length > 1 )
-      r = r.filter( ( e ) => !_.boolLike( e ) );
-      if( r.length === 1 )
-      r = r[ 0 ];
+      if( dst === undefined || dst === null || dst === '' )
+      {
+        r = src;
+        if( key !== '' )
+        used = true;
+      }
+      else if( src === null || src === '' || _.boolLike( src ) || _.boolLike( dst ) )
+      {
+        if( o.supplementing )
+        {
+          r = dst;
+        }
+        else
+        {
+          r = src;
+          if( key !== '' )
+          used = true;
+        }
+      }
+      else
+      {
+        if( key !== '' )
+        used = true;
+        if( o.mode === 'append' )
+        r = _.scalarAppendOnce( dst, src );
+        else
+        r = _.scalarPrependOnce( dst, src );
+      }
+
     }
 
-    return r;
+    r = self.simplifyInplace( r );
+
+    return [ r, used ];
   }
 
 }
@@ -1190,8 +1283,51 @@ _mapExtend.defaults =
   dstPathMap : null,
   srcPathMap : null,
   dstPath : null,
-  extending : 1,
+  mode : 'replace',
+  supplementing : 0,
 }
+
+/*
+
+qqq : implement _.path.mapSupplement, _.path.mapAppend, _.path.mapPrepend
+
+test.case = 'dstMap=map with empty src, srcMap=null, dstPath=str';
+var expected = { "" : "/dst" };
+var dstMap = { "" : "/dst2" };
+var srcMap = null;
+var dstPath = '/dst2';
+var got = path.mapExtend( dstMap, srcMap, dstPath );
+test.identical( got, expected );
+test.is( got === dstMap );
+
+test.case = 'dstMap=map with empty src, srcMap=null, dstPath=str';
+var expected = { "" : "/dst" };
+var dstMap = { "" : "/dst" };
+var srcMap = null;
+var dstPath = '/dst2';
+var got = path.mapSupplement( dstMap, srcMap, dstPath );
+test.identical( got, expected );
+test.is( got === dstMap );
+
+test.case = 'dstMap=map with empty src, srcMap=null, dstPath=str';
+var expected = { "" : [ "/dst", "/dst2" ] };
+var dstMap = { "" : "/dst" };
+var srcMap = null;
+var dstPath = '/dst2';
+var got = path.mapAppend( dstMap, srcMap, dstPath );
+test.identical( got, expected );
+test.is( got === dstMap );
+
+test.case = 'dstMap=map with empty src, srcMap=null, dstPath=str';
+var expected = { "" : [ "/dst2", "/dst" ] };
+var dstMap = { "" : "/dst" };
+var srcMap = null;
+var dstPath = '/dst2';
+var got = path.mapPrepend( dstMap, srcMap, dstPath );
+test.identical( got, expected );
+test.is( got === dstMap );
+
+*/
 
 //
 
@@ -1204,7 +1340,8 @@ function mapExtend( dstPathMap, srcPathMap, dstPath )
     dstPathMap,
     srcPathMap,
     dstPath,
-    extending : 1,
+    mode : 'replace',
+    supplementing : 0,
   });
 }
 
@@ -1223,7 +1360,8 @@ function mapSupplement( dstPathMap, srcPathMap, dstPath )
     dstPathMap,
     srcPathMap,
     dstPath,
-    extending : 0,
+    mode : 'replace',
+    supplementing : 1,
   });
 }
 
@@ -1371,6 +1509,11 @@ function simplify( src )
   if( _.strIs( src ) )
   return src;
 
+  // qqq
+  if( _.boolLike( src ) )
+  return !!src;
+  // qqq : was missing!
+
   if( _.arrayIs( src ) )
   {
     let src2 = _.arrayAppendArrayOnce( null, src );
@@ -1428,6 +1571,11 @@ function simplifyInplace( src )
 
   if( src === null )
   return '';
+
+  // qqq
+  if( _.boolLike( src ) )
+  return !!src;
+  // qqq : was missing!
 
   if( _.strIs( src ) )
   return src;
@@ -1603,8 +1751,9 @@ function mapGroupByDst( pathMap )
         }
         else
         {
-          // if( path.begins( src2, path.fromGlob( src ) ) )
-          if( path.begins( path.fromGlob( src ), path.fromGlob( src2 ) ) )
+          let srcBase = path.fromGlob( src );
+          let srcBase2 = path.fromGlob( src2 );
+          if( path.begins( srcBase, srcBase2 ) || path.begins( srcBase2, srcBase ) )
           result[ dst2 ][ src ] = !!dst;
         }
       }
