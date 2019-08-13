@@ -1405,7 +1405,7 @@ function mapsPair( dstFilePath, srcFilePath )
     if( _.mapIs( dstFilePath ) )
     {
       dstFilePath = self.mapExtend( null, dstFilePath, null );
-      srcFilePath = dstFilePath = self.mapExtend( dstFilePath, srcFilePath, null );
+      srcFilePath = dstFilePath = self.mapSupplement( dstFilePath, srcFilePath, null );
     }
     else
     {
@@ -1432,8 +1432,6 @@ function mapsPair( dstFilePath, srcFilePath )
   else
   {
     srcFilePath = dstFilePath = null;
-    // srcFilePath = dstFilePath = Object.create( null );
-    // srcFilePath[ '.' ] = null;
   }
 
   return srcFilePath;
