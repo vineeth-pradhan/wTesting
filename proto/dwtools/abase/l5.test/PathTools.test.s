@@ -4264,7 +4264,7 @@ function filterInplace( test )
   var got = _.path.filterInplace( src, double );
   var expected =
   {
-    '/true/true' : 2,
+    '/true/true' : true,
     '/false/false' : '',
     '/null/null' : '',
     '/string1/string1' : '/dir1/dir1',
@@ -4281,7 +4281,7 @@ function filterInplace( test )
   var got = _.path.filterInplace( src, srcOnly2 );
   var expected =
   {
-    '/true/true' : 2,
+    '/true/true' : true,
     '/string1/string1' : '/dir1/dir1',
     'nullnull' : '/dir3/dir3',
     '/array/array' : [ '/dir1/dir1', '/dir2/dir2' ]
@@ -4293,7 +4293,7 @@ function filterInplace( test )
   var got = _.path.filterInplace( src, srcOnly3 );
   var expected =
   {
-    '/true/true' : 2,
+    '/true/true' : true,
     '/string1/string1' : '/dir1/dir1',
     'nullnull' : '/dir3/dir3',
     '/array/array' : [ '/dir1/dir1', '/dir2/dir2' ]
@@ -6097,7 +6097,7 @@ function filter( test )
   var got = _.path.filter( src, double );
   var expected =
   {
-    '/true/true' : 2,
+    '/true/true' : true,
     '/false/false' : '',
     '/null/null' : '',
     '/string1/string1' : '/dir1/dir1',
