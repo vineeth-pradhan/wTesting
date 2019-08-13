@@ -11667,7 +11667,7 @@ function mapAppendExperiment( test )
     return this;
   }
   let obj0 = new constr( 0 );
-  
+
 
   test.case = 'replacement of boolean value';
   var exp = { '/True' : true, '/False' : [ obj0, false ] };
@@ -11692,7 +11692,7 @@ function mapAppendExperiment( test )
   test.case = 'object value replace all empty values';
   var exp = { '/Null' : [ '/dir1', '/dir2' ], '/Array' : [ '/dir1', '/dir2' ], '/Object' : [ '/dir1', '/dir2', obj0 ] };
   var dst = { '/Null' : null, '/Array' : null, '/Object' : null }
-  var src = { '/Null' : null, '/Array' : [ '/dir1', '/dir2' ], '/Object' : obj0 };
+  var src = { '/Null' : '/dst1', '/Array' : [ '/dir1', '/dir2' ], '/Object' : obj0 };
   var got = path.mapAppend( dst, src, [ '/dir1', '/dir2' ] );
   test.identical( got, exp );
   test.is( got === dst );
