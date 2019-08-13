@@ -1699,6 +1699,96 @@ function filterPairs( test )
 
 function filterPairsInplace( test )
 {
+  test.open( 'instance' );
+
+  var constructor = function ( val )
+  {
+    this.value = val;
+    return this;
+  }
+  var obj = new constructor;
+
+  test.case = 'double';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, double );
+  var expected = { '/path/path' : '[object Object][object Object]',
+                   '/path' : { 'value' : undefined } };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'srcOnly1';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, srcOnly1 );
+  var expected = { '/path' : '' };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'srcOnly2';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, srcOnly2 );
+  var expected = { '/path' : { 'value' : undefined } };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'srcOnly3';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, srcOnly3 );
+  var expected = { '/path' : { 'value' : undefined } };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  var src = { '/path' : [ obj, obj ] };
+  var got = _.path.filterPairsInplace( src, srcOnly3 );
+  var expected = { '/path' : [ { 'value' : undefined }, { 'value' : undefined } ] };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'dstOnly';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, dstOnly );
+  var expected = { '' : { 'value' : undefined } };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'dstDouble';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, dstDouble );
+  var expected = { '' : [ { 'value' : undefined }, { 'value' : undefined } ] };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'nothing1';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, nothing1 );
+  var expected = {};
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'nothing2';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, nothing2 );
+  var expected = { '' : '' };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'nothing3';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, nothing3 );
+  var expected = { '' : '' };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'nothing4';
+  var src = { '/path' : obj };
+  var got = _.path.filterPairsInplace( src, nothing4 );
+  var expected = { '' : '' };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.close( 'instance' );
+
+  /* - */
+
   test.open( 'double' );
 
   test.case = 'null';
