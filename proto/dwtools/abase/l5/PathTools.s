@@ -1264,7 +1264,8 @@ function _mapExtend( o )
         if( key !== '' )
         used = true;
         if( o.mode === 'append' )
-        r = _.scalarAppendOnce( dst, src );
+        r = _.scalarAppend( dst, src );
+        // r = _.scalarAppendOnce( dst, src );  // Dmytro : routine scalarAppendOnce does not exists
         else
         r = _.scalarPrependOnce( dst, src );
       }
@@ -1349,6 +1350,7 @@ function mapExtend( dstPathMap, srcPathMap, dstPath )
 
 /*
 qqq : cover routine mapSupplement
+Dmytro : covered. Test cases is identical to mapExtend.
 */
 
 function mapSupplement( dstPathMap, srcPathMap, dstPath )
@@ -1362,6 +1364,22 @@ function mapSupplement( dstPathMap, srcPathMap, dstPath )
     dstPath,
     mode : 'replace',
     supplementing : 1,
+  });
+}
+
+//
+
+function mapAppend( dstPathMap, srcPathMap, dstPath )
+{
+  let self = this;
+  _.assert( arguments.length === 2 || arguments.length === 3 );
+  return self._mapExtend
+  ({
+    dstPathMap,
+    srcPathMap,
+    dstPath,
+    mode : 'append',
+    supplementing : 0,
   });
 }
 
@@ -1826,6 +1844,7 @@ let Routines =
   _mapExtend,
   mapExtend,
   mapSupplement,
+  mapAppend,
   mapsPair,
 
   simplify,
