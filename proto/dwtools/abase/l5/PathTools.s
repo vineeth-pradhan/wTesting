@@ -38,6 +38,7 @@ let Self = _.path = _.path || Object.create( null );
 
 function filterPairs( filePath, onEach )
 {
+  let self = this;
   let result = Object.create( null );
   let hasDst = false;
   let hasSrc = false;
@@ -67,8 +68,14 @@ function filterPairs( filePath, onEach )
       it.src = filePath[ p ];
       if( filePath[ p ] === null )
       it.src = '';
-      let r = onEach( it );
-      elementsWrite( result, it, r );
+      if( _.boolIs( filePath[ p ] ) )
+      {
+      }
+      else
+      {
+        let r = onEach( it );
+        elementsWrite( result, it, r );
+      }
     }
   }
   else if( _.mapIs( filePath ) )
@@ -180,7 +187,18 @@ function filterPairs( filePath, onEach )
     _.assert( _.strIs( src ) );
     _.assert( _.strIs( dst ) || _.boolLike( dst ) );
 
-    result[ src ] = _.scalarAppend( result[ src ], dst );
+    if( _.boolLike( dst ) )
+    {
+      if( _.arrayIs( result[ src ] ) )
+      {
+      }
+      else if( _.strIs( result[ src ] ) && dst === false )
+      result[ src ] = dst;
+    }
+    if( _.boolLike( result[ src ] ) && dst !== '' )
+    result[ src ] = dst;
+    else
+    result[ src ] = _.scalarAppendOnce( result[ src ], dst );
 
     if( src )
     hasSrc = true;
@@ -196,6 +214,8 @@ function filterPairs( filePath, onEach )
   function end()
   {
     let r;
+
+    self.simplify( result );
 
     if( !hasSrc )
     {
@@ -1400,7 +1420,7 @@ function mapAppend( dstPathMap, srcPathMap, dstPath )
     srcPathMap,
     dstPath,
     mode : 'append',
-    supplementing : 0,
+    supplementing : 1,
   });
 }
 
@@ -1576,6 +1596,9 @@ function simplify( src )
   let keys = _.mapKeys( src );
   if( keys.length === 0 )
   return '';
+  // Dmytro : missed deleting empty pairs
+  if( keys.length !== 1 && keys.includes( '' ) && src[ '' ] === '' )
+  delete src[ '' ];
 
   let vals = _.mapVals( src );
   vals = vals.filter( ( e ) => e !== null && e !== '' );
