@@ -185,20 +185,33 @@ function filterPairs( filePath, onEach )
     src = '';
 
     _.assert( _.strIs( src ) );
-    _.assert( _.strIs( dst ) || _.boolLike( dst ) );
+    _.assert( _.strIs( dst ) || _.boolLike( dst ) || _.instanceIs( dst ) );
+
 
     if( _.boolLike( dst ) )
+    dst = !!dst;
+
+    if( _.boolLike( result[ src ] ) )
     {
-      if( _.arrayIs( result[ src ] ) )
-      {
-      }
-      else if( _.strIs( result[ src ] ) && dst === false )
+      if( dst !== '' )
       result[ src ] = dst;
     }
-    if( _.boolLike( result[ src ] ) && dst !== '' )
-    result[ src ] = dst;
+    else if( _.arrayIs( result[ src ] ) )
+    {
+      if( dst !== '' && !_.boolLike( dst ) )
+      result[ src ] =  _.scalarAppendOnce( result[ src ], dst );
+    }
+    else if( _.strIs( result[ src ] ) )
+    {
+      if( result[ src ] === '' || result[ src ] === dst )
+      result[ src ] = dst;
+      else if( result[ src ] !== '' && dst !== '' )
+      result[ src ] =  _.scalarAppendOnce( result[ src ], dst );
+    }
     else
-    result[ src ] = _.scalarAppendOnce( result[ src ], dst );
+    result[ src ] = dst;
+
+    // result[ src ] = _.scalarAppendOnce( result[ src ], dst );
 
     if( src )
     hasSrc = true;
@@ -215,7 +228,8 @@ function filterPairs( filePath, onEach )
   {
     let r;
 
-    self.simplify( result );
+    if( result[ '' ] === '' )
+    delete result[ '' ];
 
     if( !hasSrc )
     {
