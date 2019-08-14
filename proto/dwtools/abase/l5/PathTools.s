@@ -202,10 +202,13 @@ function filterPairs( filePath, onEach )
     }
     else if( _.strIs( result[ src ] ) )
     {
-      if( result[ src ] === '' || result[ src ] === dst )
+      if( result[ src ] === '' || result[ src ] === dst || dst === false )
       result[ src ] = dst;
       else if( result[ src ] !== '' && dst !== '' )
-      result[ src ] =  _.scalarAppendOnce( result[ src ], dst );
+      {
+        if( dst !== true )
+        result[ src ] =  _.scalarAppendOnce( result[ src ], dst );
+      }
     }
     else
     result[ src ] = dst;

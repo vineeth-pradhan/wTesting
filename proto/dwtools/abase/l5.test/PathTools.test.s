@@ -1670,6 +1670,14 @@ function filterPairs( test )
   test.identical( src, src2 );
   test.identical( got, expected );
 
+  test.case = 'boolean in callback, str value in src';
+  var src = { '/dir' : true, '/a' : false, '/b' : '' };
+  var src2 = _.entityShallowClone( src );
+  var got = _.path.filterPairs( src, uncorrectMap );
+  var expected = { '/dir' : '/dst', '/a' : false, '/b' : false };
+  test.identical( src, src2 );
+  test.identical( got, expected );
+
   /* - */
 
   if( Config.debug )
@@ -1722,6 +1730,16 @@ function filterPairs( test )
   function bool2( it )
   {
     return { [ it.src ] : false };
+  }
+
+  function uncorrectMap( it )
+  {
+    if( it.dst === true )
+    return { [ it.src ] : [ true, false, '', null, true, false, '', null, '/dst', true ] };
+    if( it.dst === false )
+    return { [ it.src ] : [ true, false, '', null, true, false, '', null, '/dst', false ] };
+    else
+    return { [ it.src ] : [ true, false, '', null, true, false, '', null, '/dst', true, false ] };
   }
 
   function double( it )
