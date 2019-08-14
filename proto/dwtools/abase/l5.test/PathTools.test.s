@@ -1638,6 +1638,38 @@ function filterPairs( test )
   test.identical( src, src2 );
   test.identical( got, expected );
 
+  test.case = 'boolean in callback, bool and null values in src';
+  var src = { '/dir' : true, '/a' : null, '/b' : '', '' : null };
+  var src2 = _.entityShallowClone( src );
+  var got = _.path.filterPairs( src, bool );
+  var expected = { '/dir' : true, '/a' : true, '/b' : true, '' : true };
+  test.identical( src, src2 );
+  test.identical( got, expected );
+
+  test.case = 'boolean in callback, str value in src';
+  var src = { '/dir' : false, '/a' : '/dir', '/b' : '', '' : null };
+  var src2 = _.entityShallowClone( src );
+  var got = _.path.filterPairs( src, bool );
+  var expected = { '/dir' : true, '/a' : true, '/b' : true, '' : true };
+  test.identical( src, src2 );
+  test.identical( got, expected );
+
+  test.case = 'boolean in callback, bool and null values in src';
+  var src = { '/dir' : true, '/a' : null, '/b' : '', '' : null };
+  var src2 = _.entityShallowClone( src );
+  var got = _.path.filterPairs( src, bool2 );
+  var expected = { '/dir' : false, '/a' : false, '/b' : false, '' : false };
+  test.identical( src, src2 );
+  test.identical( got, expected );
+
+  test.case = 'boolean in callback, str value in src';
+  var src = { '/dir' : false, '/a' : '/dir', '/b' : '', '' : null };
+  var src2 = _.entityShallowClone( src );
+  var got = _.path.filterPairs( src, bool2 );
+  var expected = { '/dir' : false, '/a' : false, '/b' : false, '' : false };
+  test.identical( src, src2 );
+  test.identical( got, expected );
+
   /* - */
 
   if( Config.debug )
@@ -1680,6 +1712,16 @@ function filterPairs( test )
   function duplicates( it )
   {
     return { [ it.src ] : [ it.dst, it.dst, it.dst, '', '', null, ] };
+  }
+
+  function bool( it )
+  {
+    return { [ it.src ] : true };
+  }
+
+  function bool2( it )
+  {
+    return { [ it.src ] : false };
   }
 
   function double( it )
