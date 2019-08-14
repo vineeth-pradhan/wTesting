@@ -31,11 +31,9 @@ path:
   local:
     criterion:
       predefined: 1
-    path: ''
   remote:
     criterion:
       predefined: 1
-    path: ''
   in:
     criterion:
       predefined: 0
