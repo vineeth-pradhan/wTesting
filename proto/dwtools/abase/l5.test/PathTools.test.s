@@ -12439,7 +12439,7 @@ function group( test )
 var Self =
 {
 
-  name : 'Tools/base/l5/path',
+  name : 'Tools/base/l5/path/tools',
   silencing : 1,
 
   tests :

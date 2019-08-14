@@ -8647,12 +8647,10 @@ function mapsPair( test )
   var exp = { '' : 'dir' };
   var dst = 'dir';
   var src = null;
-  debugger;
   var got = path.mapsPair( dst, src );
   test.identical( got, exp );
   test.is( got !== dst );
   test.is( got !== src );
-  debugger;
 
   test.case = 'dst=null, src=str';
   var exp = { 'dir' : '' };
@@ -9233,7 +9231,7 @@ function group( test )
 var Self =
 {
 
-  name : 'Tools/base/l5/path',
+  name : 'Tools/base/l5/path/tools',
   silencing : 1,
 
   tests :
