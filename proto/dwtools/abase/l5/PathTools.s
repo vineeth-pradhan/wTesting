@@ -1327,6 +1327,28 @@ var got = path.mapPrepend( dstMap, srcMap, dstPath );
 test.identical( got, expected );
 test.is( got === dstMap );
 
+//
+
+var dst = { '/dir' : '/file' }
+var src = { '/dir' : false }
+var got = _.path.mapAppend( dst, src )
+var expected = { '/dir' : false }
+
+var dst = { '/dir' : false }
+var src = { '/dir' : '/file' }
+var got = _.path.mapAppend( dst, src )
+var expected = { '/dir' : '/file' }
+
+var dst = { '/dir' : '/file' }
+var src = { '/dir' : true }
+var got = _.path.mapAppend( dst, src )
+var expected = { '/dir' : '/file' }
+
+var dst = { '/dir' : true }
+var src = { '/dir' : '/file' }
+var got = _.path.mapAppend( dst, src )
+var expected = { '/dir' : '/file' }
+
 */
 
 //
@@ -1546,6 +1568,11 @@ function simplify( src )
   if( !_.mapIs( src ) )
   return src;
 
+  for( let k in src )
+  {
+    src[ k ] = self.simplify( src[ k ] );
+  }
+
   let keys = _.mapKeys( src );
   if( keys.length === 0 )
   return '';
@@ -1562,10 +1589,61 @@ function simplify( src )
     return src;
   }
 
+  // for( let k in src )
+  // {
+  //   src[ k ] = self.simplify( src[ k ] );
+  // }
+
+  return src;
+}
+
+//
+
+function simplifyDst( src )
+{
+  let self = this;
+
+  _.assert( arguments.length === 1 );
+
+  if( src === null )
+  return '';
+
+  if( _.strIs( src ) )
+  return src;
+
+  // qqq
+  if( _.boolLike( src ) )
+  return !!src;
+  // qqq : was missing!
+
+  if( _.arrayIs( src ) )
+  {
+    let src2 = _.arrayAppendArrayOnce( null, src );
+    src2 = src2.filter( ( e ) => e !== null && e !== '' );
+    if( src2.length !== src.length )
+    src = src2;
+    if( src.length === 0 )
+    return '';
+    else if( src.length === 1 )
+    return src[ 0 ]
+    else
+    return src;
+  }
+
+  if( !_.mapIs( src ) )
+  return src;
+
   for( let k in src )
   {
-    src[ k ] = self.simplify( src[ k ] );
+    src[ k ] = self.simplifyDst( src[ k ] );
   }
+
+  let keys = _.mapKeys( src );
+  if( keys.length === 0 )
+  return '';
+
+  if( keys.length === 1 && src[ '' ] !== undefined )
+  src = src[ '' ];
 
   return src;
 }
@@ -1847,6 +1925,7 @@ let Routines =
   mapsPair,
 
   simplify,
+  simplifyDst,
   simplifyInplace,
 
   mapDstFromSrc,
