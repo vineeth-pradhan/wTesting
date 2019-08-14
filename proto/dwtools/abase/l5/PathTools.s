@@ -264,7 +264,7 @@ function filterPairs( filePath, onEach )
 
 function filterPairsInplace( filePath, onEach )
 {
-  let self = this;
+  let result = Object.create( null );
   let hasDst = false;
   let hasSrc = false;
   let it = Object.create( null );
@@ -281,15 +281,14 @@ function filterPairsInplace( filePath, onEach )
     filePath = '';
     it.src = filePath;
     let r = onEach( it );
-    if( _.mapIs( r ) )
-    r = _.mapKeys( r );
-    if( _.arrayIs( r ) && r.length === 1 )
-    r = r[ 0 ];
-    if( r === undefined )
-    return filePath;
-    if( r === null || _.arrayIs( r ) && !_.arrayIsPopulated( r ) )
+    elementsWrite( result, it, r );
+    filePath = normalizeArray ( _.mapKeys( result ) );
+    if( filePath.length === 0 )
     return '';
-    return r;
+    if( filePath. length === 1 )
+    return filePath[ 0 ];
+    else
+    return filePath;
   }
   else if( _.arrayIs( filePath ) )
   {
@@ -299,18 +298,17 @@ function filterPairsInplace( filePath, onEach )
     {
       it.src = filePath2[ p ];
       if( filePath2[ p ] === null )
-      it.value = '';
-      let r = onEach( it );
-      if( _.mapIs( r ) )
-      r = _.mapKeys( r );
-      if( r === undefined || r === null || r === '' )
+      it.src = '';
+      if( _.boolIs( filePath2[ p ] ) )
       {
       }
       else
       {
-        _.arrayAppendArraysOnce( filePath, r );
+        let r = onEach( it );
+        elementsWrite( result, it, r );
       }
     }
+    _.arrayAppendArrayOnce( filePath, normalizeArray( _.mapKeys( result ) ) );
   }
   else if( _.mapIs( filePath ) )
   {
@@ -353,9 +351,10 @@ function filterPairsInplace( filePath, onEach )
   }
   else _.assert( 0 );
 
-  if( _.mapIs( filePath ) && !hasDst && !hasSrc )
+  if( _.mapIs( filePath ) )
   {
-    return self.simplifyInplace( filePath );
+    if( filePath[ '' ] === '' )
+    delete filePath[ '' ];
   }
 
   return filePath;
@@ -426,15 +425,40 @@ function filterPairsInplace( filePath, onEach )
     _.assert( _.strIs( src ) );
     _.assert( _.strIs( dst ) || _.boolLike( dst ) || _.instanceIs( dst ) );
 
-    filePath[ src ] = _.scalarAppend( filePath[ src ], dst );
+    if( _.boolLike( dst ) )
+    dst = !!dst;
 
-    if( src )
-    hasSrc = true;
+    if( _.boolLike( filePath[ src ] ) )
+    {
+      if( dst !== '' )
+      filePath[ src ] = dst;
+    }
+    else if( _.arrayIs( filePath[ src ] ) )
+    {
+      if( dst !== '' && !_.boolLike( dst ) )
+      filePath[ src ] =  _.scalarAppendOnce( filePath[ src ], dst );
+    }
+    else if( _.strIs( filePath[ src ] ) )
+    {
+      if( filePath[ src ] === '' || filePath[ src ] === dst || dst === false )
+      filePath[ src ] = dst;
+      else if( filePath[ src ] !== '' && dst !== '' )
+      {
+        if( dst !== true )
+        filePath[ src ] =  _.scalarAppendOnce( filePath[ src ], dst );
+      }
+    }
+    else
+    filePath[ src ] = dst;
 
-    if( dst !== '' )
-    hasDst = true;
+    // filePath[ src ] = _.scalarAppendOnce( filePath[ src ], dst );
 
     return filePath;
+  }
+
+  function normalizeArray( src )
+  {
+    return _.arrayRemoveElement( src, '' );
   }
 
 }
