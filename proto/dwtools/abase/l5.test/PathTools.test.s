@@ -1588,6 +1588,22 @@ function filterPairs( test )
   test.identical( src, src2 );
   test.identical( got, expected );
 
+  test.case = 'duplicates, onEach return array';
+  var src = [ '/b', null, null, '', '', '/b' ];
+  var src2 = _.entityShallowClone( src );
+  var got = _.path.filterPairs( src, ( it ) => [ it.src, '/file', '/dst', '', null, '', null, undefined ] );
+  var expected = [ '/b', '/file', '/dst' ];
+  test.identical( src, src2 );
+  test.identical( got, expected );
+
+  test.case = 'duplicates, onEach return array';
+  var src = { 'dir' : [ '/b', null, null, '', '', '/b' ] };
+  var src2 = _.entityShallowClone( src );
+  var got = _.path.filterPairs( src, ( it ) => [ it.src, '/file', '/dst', '', null, '', null, undefined ] );
+  var expected = { 'dir' : '/b', '/file' : '/b', '/dst' : '/b' };
+  test.identical( src, src2 );
+  test.identical( got, expected );
+
   test.case = 'duplicates';
   var src = { '/dir1' : '/dir2', '/a' : '/b' };
   var src2 = _.entityShallowClone( src );
@@ -3291,6 +3307,20 @@ function filterPairsInplace( test )
   var src = { '' : [ '/b', null, null, '', '', '/b' ] };
   var got = _.path.filterPairsInplace( src, duplicates );
   var expected = { '' : '/b' };
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'duplicates, onEach return array';
+  var src = [ '/b', null, null, '', '', '/b' ];
+  var got = _.path.filterPairsInplace( src, ( it ) => [ it.src, '/file', '/dst', '', null, '', null, undefined ] );
+  var expected = [ '/b', '/file', '/dst' ];
+  test.identical( got, expected );
+  test.is( got === src );
+
+  test.case = 'duplicates, onEach return array';
+  var src = { 'dir' : [ '/b', null, null, '', '', '/b' ] };
+  var got = _.path.filterPairsInplace( src, ( it ) => [ it.src, '/file', '/dst', '', null, '', null, undefined ] );
+  var expected = { 'dir' : '/b', '/file' : '/b', '/dst' : '/b' };
   test.identical( got, expected );
   test.is( got === src );
 
