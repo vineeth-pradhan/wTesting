@@ -38,7 +38,6 @@ let Self = _.path = _.path || Object.create( null );
 
 function filterPairs( filePath, onEach )
 {
-  let self = this;
   let result = Object.create( null );
   let hasDst = false;
   let hasSrc = false;
