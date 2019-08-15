@@ -7,3 +7,4 @@ Collection of routines to operate paths in the reliable and consistent way. Path
 npm install
 node sample/Sample.s
 ```
+
