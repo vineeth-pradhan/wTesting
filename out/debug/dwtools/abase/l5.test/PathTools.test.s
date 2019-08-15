@@ -5390,7 +5390,7 @@ function filter( test )
 
   test.case = 'empty dst in map';
   var got = _.path.filter( { '/dir' : [] }, ( e, it ) => [ e ] );
-  var expected = { '/dir' : '' };
+  var expected = '/dir';
   test.identical( got, expected );
 
   test.case = 'map, dst has one element';
@@ -6073,7 +6073,7 @@ function filter( test )
   var src = { '/src' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6105,7 +6105,7 @@ function filter( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6215,7 +6215,7 @@ function filter( test )
   var src = { '/src' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6247,7 +6247,7 @@ function filter( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6360,7 +6360,6 @@ function filter( test )
     '/null/null' : '',
     '/string1/string1' : '/dir1/dir1',
     '/string2/string2' : '',
-    '' : '',
     'nullnull' : '/dir3/dir3',
     '/array/array' : [ '/dir1/dir1', '/dir2/dir2' ],
     '/emptyArray/emptyArray' : ''
@@ -6397,14 +6396,14 @@ function filter( test )
   test.case = 'nothing2';
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
   test.case = 'nothing3'
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6608,7 +6607,7 @@ function filterExtends( test )
   var src = { '/src' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, srcOnly1 );
-  var expected = { '/src' : '' };
+  var expected = '/src';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6640,7 +6639,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, srcOnly1 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6695,7 +6694,7 @@ function filterExtends( test )
   var src = { '/src' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, srcOnly2 );
-  var expected = { '/src' : '' };
+  var expected = '/src';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6727,7 +6726,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, srcOnly2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6956,7 +6955,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing1 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6988,7 +6987,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing1 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -7043,7 +7042,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -7075,7 +7074,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -7130,7 +7129,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -7162,7 +7161,7 @@ function filterExtends( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -12288,7 +12287,7 @@ function simplifyInplace( test )
 
   test.case = 'number';
   var got = _.path.simplifyInplace( 2 );
-  test.identical( got, 2 );
+  test.identical( got, true );
 
   test.case = 'undefined';
   var got = _.path.simplifyInplace( undefined );
@@ -12592,18 +12591,18 @@ function group( test )
   var got = _.path.group( o );
   test.identical( got, expected )
 
-  test.case = 'vals has inner arrays';
-  var o =
-  {
-    keys : [ '/' ],
-    vals : [ '.', [ '/a', '/b' ], [ './a', '/a/b' ] ]
-  }
-  var expected =
-  {
-    '/' : [ '/a', '/b', '/a/b' ],
-  }
-  var got = _.path.group( o );
-  test.identical( got, expected )
+  // test.case = 'vals has inner arrays';
+  // var o =
+  // {
+  //   keys : [ '/' ],
+  //   vals : [ '.', '/a', '/b', './a', '/a/b' ]
+  // }
+  // var expected =
+  // {
+  //   '/' : [ '/a', '/b', '/a/b' ],
+  // }
+  // var got = _.path.group( o );
+  // test.identical( got, expected )
 
   test.case = 'result is existing map'
   var o =
@@ -12628,6 +12627,26 @@ function group( test )
   test.shouldThrowErrorSync( () => _.path.group({ vals : '/val', keys : '/' }))
 }
 
+// xxx
+
+function groupExperiment( test )
+{
+  test.case = 'vals has inner arrays';
+  var o =
+  {
+    keys : [ '/' ],
+    vals : [ '.', [ '/a', '/b' ], [ './a', '/a/b' ] ] // Dmytro: need check
+  }
+  var expected =
+  {
+    '/' : [ '/a', '/b', '/a/b' ],
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+}
+
+groupExperiment.experimental = 1;
+
 // --
 // declare
 // --
@@ -12646,13 +12665,13 @@ var Self =
     filterPairs,
     filterPairsInplace,
     filterInplace,
-    filterInplaceExtends, // Dmytro : filterInplace and filterInplaceExtends need to concatenate qqq : ?
+    filterInplaceExtends,
     filter,
-    filterExtends, // Dmytro : filter and filterExtends need to concatenate qqq : ?
+    filterExtends,
 
     mapExtend,
     mapSupplement,
-    mapAppend,
+    // mapAppend,
     mapAppendExperiment,
     mapsPair,
     simplify,
@@ -12661,6 +12680,7 @@ var Self =
     mapGroupByDst,
 
     group,
+    groupExperiment,
 
   },
 

@@ -12627,6 +12627,8 @@ function group( test )
   test.shouldThrowErrorSync( () => _.path.group({ vals : '/val', keys : '/' }))
 }
 
+// xxx
+
 function groupExperiment( test )
 {
   test.case = 'vals has inner arrays';
@@ -12642,6 +12644,7 @@ function groupExperiment( test )
   var got = _.path.group( o );
   test.identical( got, expected )
 }
+
 groupExperiment.experimental = 1;
 
 // --
