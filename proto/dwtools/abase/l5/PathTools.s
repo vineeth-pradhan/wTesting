@@ -200,7 +200,7 @@ function filterPairs( filePath, onEach )
       if( dst !== '' && !_.boolLike( dst ) )
       result[ src ] =  _.scalarAppendOnce( result[ src ], dst );
     }
-    else if( _.strIs( result[ src ] ) )
+    else if( _.strIs( result[ src ] ) || _.instanceIs( result[ src ] ) )
     {
       if( result[ src ] === '' || result[ src ] === dst || dst === false )
       result[ src ] = dst;
@@ -438,7 +438,7 @@ function filterPairsInplace( filePath, onEach )
       if( dst !== '' && !_.boolLike( dst ) )
       filePath[ src ] =  _.scalarAppendOnce( filePath[ src ], dst );
     }
-    else if( _.strIs( filePath[ src ] ) )
+    else if( _.strIs( filePath[ src ] ) || _.instanceIs( filePath[ src ] ) )
     {
       if( filePath[ src ] === '' || filePath[ src ] === dst || dst === false )
       filePath[ src ] = dst;
