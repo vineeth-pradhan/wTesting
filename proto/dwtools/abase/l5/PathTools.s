@@ -1933,26 +1933,101 @@ function mapGroupByDst( pathMap )
 
 }
 
+// --
+// etc
+// --
+
+// function areBasePathsEquivalent( basePath1, basePath2 )
+// {
+//   let path = this;
+//
+//   let filePath1 = path.mapSrcFromDst( basePath1 );
+//   let filePath2 = path.mapSrcFromDst( basePath2 );
+//
+//   basePath1 = path.mapDstFromDst( basePath1 );
+//   basePath2 = path.mapDstFromDst( basePath2 );
+//
+//   // if( filePath1.length > 0 && filePath2.length > 0 )
+//   // if( !_.entityIdentical( basePath1, basePath2 ) )
+//   // return false;
+//
+//   if( !_.entityIdentical( basePath1, basePath2 ) )
+//   return false;
+//
+//   return true;
+// }
+
 //
 
-function areBasePathsEquivalent( basePath1, basePath2 )
+function trackToRoot( filePath )
 {
-  let path = this;
+  let self = this;
+  let result = [];
 
-  let filePath1 = path.mapSrcFromDst( basePath1 );
-  let filePath2 = path.mapSrcFromDst( basePath2 );
+  _.assert( arguments.length === 1 );
+  _.assert( self.isAbsolute( filePath ) );
 
-  basePath1 = path.mapDstFromDst( basePath1 );
-  basePath2 = path.mapDstFromDst( basePath2 );
+  debugger;
+  filePath = self.detrail( filePath );
+  while( !self.isRoot( filePath ) )
+  {
+    result.unshift( filePath );
+    filePath = self.dir( filePath );
+  }
 
-  if( filePath1.length > 0 && filePath2.length > 0 )
-  if( !_.entityIdentical( basePath1, basePath2 ) )
-  return false;
+  return result;
+}
 
-  if( !_.entityIdentical( basePath1, basePath2 ) )
-  return false;
+//
 
-  return true;
+function mapOptimal( filePath )
+{
+  let self = this;
+  let dirToFile = Object.create( null );
+  let result = Object.create( null );
+
+  debugger;
+
+  if( !self.mapIs( filePath ) )
+  filePath = self.mapExtend( null, filePath );
+
+  for( let src in filePath )
+  {
+    let dst = filePath[ src ];
+    if( _.boolLike( dst ) )
+    continue;
+
+    visited( src, src );
+
+  }
+
+  /* */
+
+  function visited( filePath )
+  {
+    debugger;
+    let dirs = path.trackToRoot( filePath );
+    dirs.forEach( ( dir ) =>
+    {
+      if( dirToFile[ dir ] )
+      visited( dirToFile[ dir ], filePath );
+      dirToFile[ dir ] = filePath;
+    });
+  }
+
+  /* */
+
+  function visit( oldPath, newPath )
+  {
+    debugger;
+    let dirs = path.trackToRoot( oldPath );
+    dirs.forEach( ( dir ) =>
+    {
+      dirToFile[ dir ] = newPath
+    });
+  }
+
+  debugger;
 }
 
 // --
@@ -1997,7 +2072,11 @@ let Routines =
   mapSrcFromDst,
   mapGroupByDst,
 
-  areBasePathsEquivalent,
+  // etc
+
+  // areBasePathsEquivalent,
+  trackToRoot, /* qqq : add basic test coverage */
+  mapOptimal,
 
 }
 
