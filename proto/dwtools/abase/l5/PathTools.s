@@ -1854,6 +1854,113 @@ function mapSrcFromDst( pathMap )
   return _.mapKeys( pathMap )
 }
 
+// --
+// etc
+// --
+
+// function areBasePathsEquivalent( basePath1, basePath2 )
+// {
+//   let path = this;
+//
+//   let filePath1 = path.mapSrcFromDst( basePath1 );
+//   let filePath2 = path.mapSrcFromDst( basePath2 );
+//
+//   basePath1 = path.mapDstFromDst( basePath1 );
+//   basePath2 = path.mapDstFromDst( basePath2 );
+//
+//   // if( filePath1.length > 0 && filePath2.length > 0 )
+//   // if( !_.entityIdentical( basePath1, basePath2 ) )
+//   // return false;
+//
+//   if( !_.entityIdentical( basePath1, basePath2 ) )
+//   return false;
+//
+//   return true;
+// }
+
+//
+
+function trackToRoot( filePath )
+{
+  let self = this;
+  let result = [];
+
+  _.assert( arguments.length === 1 );
+  _.assert( self.isAbsolute( filePath ) );
+
+  debugger;
+  filePath = self.detrail( filePath );
+  while( !self.isRoot( filePath ) )
+  {
+    result.unshift( filePath );
+    filePath = self.dir( filePath );
+  }
+
+  return result;
+}
+
+//
+
+function group( o )
+{
+  let self = this;
+
+  _.routineOptions( group, arguments );
+  _.assert( _.arrayIs( o.vals ) );
+  _.assert( o.result === null || _.mapIs( o.result ) );
+
+  o.result = o.result || Object.create( null );
+  o.result[ '/' ] = o.result[ '/' ] || [];
+
+  o.keys = self.s.from( o.keys );
+  o.vals = self.s.from( o.vals );
+
+  let keys = self.mapSrcFromSrc( o.keys );
+  let vals = _.arrayFlattenOnce( null, o.vals );
+
+  _.assert( _.arrayIs( keys ) );
+  _.assert( _.arrayIs( vals ) );
+
+  // if( o.vals && o.vals.length )
+  // debugger;
+
+  /* */
+
+  for( let k = 0 ; k < keys.length ; k++ )
+  {
+    let key = keys[ k ];
+    let res = o.result[ key ] = o.result[ key ] || [];
+  }
+
+  /* */
+
+  for( let key in o.result )
+  {
+    let res = o.result[ key ];
+    for( let v = 0 ; v < vals.length ; v++ )
+    {
+      let val = vals[ v ];
+      if( _.strBegins( val, key ) )
+      _.arrayAppendOnce( res, val );
+    }
+
+  }
+
+  /* */
+
+  // if( o.vals && o.vals.length )
+  // debugger;
+
+  return o.result;
+}
+
+group.defaults =
+{
+  keys : null,
+  vals : null,
+  result : null,
+}
+
 //
 
 function mapGroupByDst( pathMap )
@@ -1933,51 +2040,6 @@ function mapGroupByDst( pathMap )
 
 }
 
-// --
-// etc
-// --
-
-// function areBasePathsEquivalent( basePath1, basePath2 )
-// {
-//   let path = this;
-//
-//   let filePath1 = path.mapSrcFromDst( basePath1 );
-//   let filePath2 = path.mapSrcFromDst( basePath2 );
-//
-//   basePath1 = path.mapDstFromDst( basePath1 );
-//   basePath2 = path.mapDstFromDst( basePath2 );
-//
-//   // if( filePath1.length > 0 && filePath2.length > 0 )
-//   // if( !_.entityIdentical( basePath1, basePath2 ) )
-//   // return false;
-//
-//   if( !_.entityIdentical( basePath1, basePath2 ) )
-//   return false;
-//
-//   return true;
-// }
-
-//
-
-function trackToRoot( filePath )
-{
-  let self = this;
-  let result = [];
-
-  _.assert( arguments.length === 1 );
-  _.assert( self.isAbsolute( filePath ) );
-
-  debugger;
-  filePath = self.detrail( filePath );
-  while( !self.isRoot( filePath ) )
-  {
-    result.unshift( filePath );
-    filePath = self.dir( filePath );
-  }
-
-  return result;
-}
-
 //
 
 function mapOptimal( filePath )
@@ -2007,12 +2069,13 @@ function mapOptimal( filePath )
   {
     debugger;
     let dirs = path.trackToRoot( filePath );
-    dirs.forEach( ( dir ) =>
+    for( let d = 0 ; d < dirs.length ; d++ )
     {
+      let dir = dirs[ d ];
       if( dirToFile[ dir ] )
-      visited( dirToFile[ dir ], filePath );
+      visit( filePath, dirToFile[ dir ] );
       dirToFile[ dir ] = filePath;
-    });
+    }
   }
 
   /* */
@@ -2070,12 +2133,13 @@ let Routines =
   mapDstFromDst,
   mapSrcFromSrc,
   mapSrcFromDst,
-  mapGroupByDst,
 
   // etc
 
   // areBasePathsEquivalent,
   trackToRoot, /* qqq : add basic test coverage */
+  group,
+  mapGroupByDst,
   mapOptimal,
 
 }

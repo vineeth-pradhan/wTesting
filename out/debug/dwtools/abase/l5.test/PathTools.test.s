@@ -12477,7 +12477,9 @@ function mapDstFromDst( test )
 
 }
 
-//
+// --
+// etc
+// --
 
 function mapGroupByDst( test )
 {
@@ -12677,8 +12679,10 @@ var Self =
     simplify,
     simplifyInplace,
     mapDstFromDst,
-    mapGroupByDst,
 
+    // etc
+
+    mapGroupByDst,
     group,
     groupExperiment,
 
