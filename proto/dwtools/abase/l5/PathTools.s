@@ -67,8 +67,14 @@ function filterPairs( filePath, onEach )
       it.src = filePath[ p ];
       if( filePath[ p ] === null )
       it.src = '';
-      let r = onEach( it );
-      elementsWrite( result, it, r );
+      if( _.boolIs( filePath[ p ] ) )
+      {
+      }
+      else
+      {
+        let r = onEach( it );
+        elementsWrite( result, it, r );
+      }
     }
   }
   else if( _.mapIs( filePath ) )
@@ -178,9 +184,36 @@ function filterPairs( filePath, onEach )
     src = '';
 
     _.assert( _.strIs( src ) );
-    _.assert( _.strIs( dst ) || _.boolLike( dst ) );
+    _.assert( _.strIs( dst ) || _.boolLike( dst ) || _.instanceIs( dst ) );
 
-    result[ src ] = _.scalarAppend( result[ src ], dst );
+
+    if( _.boolLike( dst ) )
+    dst = !!dst;
+
+    if( _.boolLike( result[ src ] ) )
+    {
+      if( dst !== '' )
+      result[ src ] = dst;
+    }
+    else if( _.arrayIs( result[ src ] ) )
+    {
+      if( dst !== '' && !_.boolLike( dst ) )
+      result[ src ] =  _.scalarAppendOnce( result[ src ], dst );
+    }
+    else if( _.strIs( result[ src ] ) || _.instanceIs( result[ src ] ) )
+    {
+      if( result[ src ] === '' || result[ src ] === dst || dst === false )
+      result[ src ] = dst;
+      else if( result[ src ] !== '' && dst !== '' )
+      {
+        if( dst !== true )
+        result[ src ] =  _.scalarAppendOnce( result[ src ], dst );
+      }
+    }
+    else
+    result[ src ] = dst;
+
+    // result[ src ] = _.scalarAppendOnce( result[ src ], dst );
 
     if( src )
     hasSrc = true;
@@ -196,6 +229,9 @@ function filterPairs( filePath, onEach )
   function end()
   {
     let r;
+
+    if( result[ '' ] === '' )
+    delete result[ '' ];
 
     if( !hasSrc )
     {
@@ -228,7 +264,7 @@ function filterPairs( filePath, onEach )
 
 function filterPairsInplace( filePath, onEach )
 {
-  let self = this;
+  let result = Object.create( null );
   let hasDst = false;
   let hasSrc = false;
   let it = Object.create( null );
@@ -245,15 +281,14 @@ function filterPairsInplace( filePath, onEach )
     filePath = '';
     it.src = filePath;
     let r = onEach( it );
-    if( _.mapIs( r ) )
-    r = _.mapKeys( r );
-    if( _.arrayIs( r ) && r.length === 1 )
-    r = r[ 0 ];
-    if( r === undefined )
-    return filePath;
-    if( r === null || _.arrayIs( r ) && !_.arrayIsPopulated( r ) )
+    elementsWrite( result, it, r );
+    filePath = normalizeArray ( _.mapKeys( result ) );
+    if( filePath.length === 0 )
     return '';
-    return r;
+    if( filePath. length === 1 )
+    return filePath[ 0 ];
+    else
+    return filePath;
   }
   else if( _.arrayIs( filePath ) )
   {
@@ -263,18 +298,17 @@ function filterPairsInplace( filePath, onEach )
     {
       it.src = filePath2[ p ];
       if( filePath2[ p ] === null )
-      it.value = '';
-      let r = onEach( it );
-      if( _.mapIs( r ) )
-      r = _.mapKeys( r );
-      if( r === undefined || r === null || r === '' )
+      it.src = '';
+      if( _.boolIs( filePath2[ p ] ) )
       {
       }
       else
       {
-        _.arrayAppendArraysOnce( filePath, r );
+        let r = onEach( it );
+        elementsWrite( result, it, r );
       }
     }
+    _.arrayAppendArrayOnce( filePath, normalizeArray( _.mapKeys( result ) ) );
   }
   else if( _.mapIs( filePath ) )
   {
@@ -317,9 +351,10 @@ function filterPairsInplace( filePath, onEach )
   }
   else _.assert( 0 );
 
-  if( _.mapIs( filePath ) && !hasDst && !hasSrc )
+  if( _.mapIs( filePath ) )
   {
-    return self.simplifyInplace( filePath );
+    if( filePath[ '' ] === '' )
+    delete filePath[ '' ];
   }
 
   return filePath;
@@ -390,15 +425,40 @@ function filterPairsInplace( filePath, onEach )
     _.assert( _.strIs( src ) );
     _.assert( _.strIs( dst ) || _.boolLike( dst ) || _.instanceIs( dst ) );
 
-    filePath[ src ] = _.scalarAppend( filePath[ src ], dst );
+    if( _.boolLike( dst ) )
+    dst = !!dst;
 
-    if( src )
-    hasSrc = true;
+    if( _.boolLike( filePath[ src ] ) )
+    {
+      if( dst !== '' )
+      filePath[ src ] = dst;
+    }
+    else if( _.arrayIs( filePath[ src ] ) )
+    {
+      if( dst !== '' && !_.boolLike( dst ) )
+      filePath[ src ] =  _.scalarAppendOnce( filePath[ src ], dst );
+    }
+    else if( _.strIs( filePath[ src ] ) || _.instanceIs( filePath[ src ] ) )
+    {
+      if( filePath[ src ] === '' || filePath[ src ] === dst || dst === false )
+      filePath[ src ] = dst;
+      else if( filePath[ src ] !== '' && dst !== '' )
+      {
+        if( dst !== true )
+        filePath[ src ] =  _.scalarAppendOnce( filePath[ src ], dst );
+      }
+    }
+    else
+    filePath[ src ] = dst;
 
-    if( dst !== '' )
-    hasDst = true;
+    // filePath[ src ] = _.scalarAppendOnce( filePath[ src ], dst );
 
     return filePath;
+  }
+
+  function normalizeArray( src )
+  {
+    return _.arrayRemoveElement( src, '' );
   }
 
 }
@@ -1264,7 +1324,7 @@ function _mapExtend( o )
         if( key !== '' )
         used = true;
         if( o.mode === 'append' )
-        r = _.scalarAppendOnce( dst, src );
+        r = _.scalarAppendOnce( dst, src );  // Dmytro : routine scalarAppendOnce does not exists
         else
         r = _.scalarPrependOnce( dst, src );
       }
@@ -1371,6 +1431,7 @@ function mapExtend( dstPathMap, srcPathMap, dstPath )
 
 /*
 qqq : cover routine mapSupplement
+Dmytro : covered. Test cases is identical to mapExtend.
 */
 
 function mapSupplement( dstPathMap, srcPathMap, dstPath )
@@ -1383,6 +1444,22 @@ function mapSupplement( dstPathMap, srcPathMap, dstPath )
     srcPathMap,
     dstPath,
     mode : 'replace',
+    supplementing : 1,
+  });
+}
+
+//
+
+function mapAppend( dstPathMap, srcPathMap, dstPath )
+{
+  let self = this;
+  _.assert( arguments.length === 2 || arguments.length === 3 );
+  return self._mapExtend
+  ({
+    dstPathMap,
+    srcPathMap,
+    dstPath,
+    mode : 'append',
     supplementing : 1,
   });
 }
@@ -1559,6 +1636,9 @@ function simplify( src )
   let keys = _.mapKeys( src );
   if( keys.length === 0 )
   return '';
+  // Dmytro : missed deleting empty pairs
+  if( keys.length !== 1 && keys.includes( '' ) && src[ '' ] === '' )
+  delete src[ '' ];
 
   let vals = _.mapVals( src );
   vals = vals.filter( ( e ) => e !== null && e !== '' );
@@ -1904,6 +1984,7 @@ let Routines =
   _mapExtend,
   mapExtend,
   mapSupplement,
+  mapAppend,
   mapsPair,
 
   simplify,
