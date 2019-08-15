@@ -5390,7 +5390,7 @@ function filter( test )
 
   test.case = 'empty dst in map';
   var got = _.path.filter( { '/dir' : [] }, ( e, it ) => [ e ] );
-  var expected = { '/dir' : '' };
+  var expected = '/dir';
   test.identical( got, expected );
 
   test.case = 'map, dst has one element';
@@ -6073,7 +6073,7 @@ function filter( test )
   var src = { '/src' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6105,7 +6105,7 @@ function filter( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6215,7 +6215,7 @@ function filter( test )
   var src = { '/src' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6247,7 +6247,7 @@ function filter( test )
   var src = { '' : [ 'dst1', 'dst2' ] };
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -6360,7 +6360,6 @@ function filter( test )
     '/null/null' : '',
     '/string1/string1' : '/dir1/dir1',
     '/string2/string2' : '',
-    '' : '',
     'nullnull' : '/dir3/dir3',
     '/array/array' : [ '/dir1/dir1', '/dir2/dir2' ],
     '/emptyArray/emptyArray' : ''
@@ -6397,14 +6396,14 @@ function filter( test )
   test.case = 'nothing2';
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing2 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
   test.case = 'nothing3'
   var src2 = _.entityShallowClone( src );
   var got = _.path.filter( src, nothing3 );
-  var expected = { '' : '' };
+  var expected = '';
   test.identical( src, src2 );
   test.identical( got, expected );
 
@@ -12288,7 +12287,7 @@ function simplifyInplace( test )
 
   test.case = 'number';
   var got = _.path.simplifyInplace( 2 );
-  test.identical( got, 2 );
+  test.identical( got, true );
 
   test.case = 'undefined';
   var got = _.path.simplifyInplace( undefined );
