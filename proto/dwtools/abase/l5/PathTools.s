@@ -2059,10 +2059,7 @@ function setOptimize( filePath )
 {
   let self = this;
   let topToBottom = Object.create( null );
-  let bottomToTop = Object.create( null );
-  let result = Object.create( null );
-
-  debugger;
+  let bottomToTops = Object.create( null );
 
   if( !_.mapIs( filePath ) )
   filePath = self.mapExtend( null, filePath );
@@ -2073,24 +2070,28 @@ function setOptimize( filePath )
     if( _.boolLike( dst ) )
     continue;
 
-    if( bottomToTop[ src ] )
-    revisit( topToBottom[ src ], src )
+    debugger;
+    if( topToBottom[ src ] && _.strBegins( topToBottom[ src ], src ) )
+    {
+      revisit( src );
+    }
     else
     {
       let topPaths = self.trackToRoot( src );
       if( !isVisited( topPaths, src ) )
-      visit( topPaths, src )
+      visit( topPaths, src );
     }
 
   }
 
-  return Object.keys( bottomToTop );
+  let result = Object.keys( bottomToTops );
+  result.sort();
+  return result;
 
   /* */
 
   function isVisited( topPaths, src )
   {
-    debugger;
     for( let d = 0 ; d < topPaths.length ; d++ )
     {
       if( topToBottom[ topPaths[ d ] ] )
@@ -2103,22 +2104,23 @@ function setOptimize( filePath )
 
   function visit( topPaths, src )
   {
-    debugger;
-    _.assert( bottomToTop[ topPath ] === undefined );
-    bottomToTop[ topPath ] = topPaths;
+    _.assert( bottomToTops[ src ] === undefined );
+    bottomToTops[ src ] = topPaths;
     for( let d = 0 ; d < topPaths.length ; d++ )
     {
       let dir = topPaths[ d ];
-      topToBottom[ dir ] = bottomPath;
+      topToBottom[ dir ] = src;
     }
   }
 
   /* */
 
-  function revisit( topPaths, src )
+  function revisit( src )
   {
+    let topPaths = bottomToTops[ topToBottom[ src ] ];
+    delete bottomToTops[ topToBottom[ src ] ];
+    bottomToTops[ src ] = topPaths
     debugger;
-    result[ src ] = true;
     for( let d = 0 ; d < topPaths.length ; d++ )
     {
       let dir = topPaths[ d ]
@@ -2126,7 +2128,6 @@ function setOptimize( filePath )
     }
   }
 
-  debugger;
 }
 
 // --
