@@ -1886,14 +1886,27 @@ function trackToRoot( filePath )
   let result = [];
 
   _.assert( arguments.length === 1 );
-  _.assert( self.isAbsolute( filePath ) );
 
-  debugger;
   filePath = self.detrail( filePath );
-  while( !self.isRoot( filePath ) )
+
+  if( self.isAbsolute( filePath ) )
   {
-    result.unshift( filePath );
-    filePath = self.dir( filePath );
+    while( filePath !== self._rootStr )
+    {
+      result.unshift( filePath );
+      filePath = self.detrail( self.dir( filePath ) );
+    }
+  }
+  else
+  {
+    filePath = self.undot( filePath );
+    if( !self.isDotted( filePath ) )
+    do
+    {
+      result.unshift( filePath );
+      filePath = self.detrail( self.dir( filePath ) );
+    }
+    while( !self.isDotted( filePath ) );
   }
 
   return result;
@@ -2042,15 +2055,16 @@ function mapGroupByDst( pathMap )
 
 //
 
-function mapOptimal( filePath )
+function setOptimize( filePath )
 {
   let self = this;
-  let dirToFile = Object.create( null );
+  let topToBottom = Object.create( null );
+  let bottomToTop = Object.create( null );
   let result = Object.create( null );
 
   debugger;
 
-  if( !self.mapIs( filePath ) )
+  if( !_.mapIs( filePath ) )
   filePath = self.mapExtend( null, filePath );
 
   for( let src in filePath )
@@ -2059,35 +2073,57 @@ function mapOptimal( filePath )
     if( _.boolLike( dst ) )
     continue;
 
-    visited( src, src );
+    if( bottomToTop[ src ] )
+    revisit( topToBottom[ src ], src )
+    else
+    {
+      let topPaths = self.trackToRoot( src );
+      if( !isVisited( topPaths, src ) )
+      visit( topPaths, src )
+    }
 
+  }
+
+  return Object.keys( bottomToTop );
+
+  /* */
+
+  function isVisited( topPaths, src )
+  {
+    debugger;
+    for( let d = 0 ; d < topPaths.length ; d++ )
+    {
+      if( topToBottom[ topPaths[ d ] ] )
+      return true;
+    }
+    return false;
   }
 
   /* */
 
-  function visited( filePath )
+  function visit( topPaths, src )
   {
     debugger;
-    let dirs = path.trackToRoot( filePath );
-    for( let d = 0 ; d < dirs.length ; d++ )
+    _.assert( bottomToTop[ topPath ] === undefined );
+    bottomToTop[ topPath ] = topPaths;
+    for( let d = 0 ; d < topPaths.length ; d++ )
     {
-      let dir = dirs[ d ];
-      if( dirToFile[ dir ] )
-      visit( filePath, dirToFile[ dir ] );
-      dirToFile[ dir ] = filePath;
+      let dir = topPaths[ d ];
+      topToBottom[ dir ] = bottomPath;
     }
   }
 
   /* */
 
-  function visit( oldPath, newPath )
+  function revisit( topPaths, src )
   {
     debugger;
-    let dirs = path.trackToRoot( oldPath );
-    dirs.forEach( ( dir ) =>
+    result[ src ] = true;
+    for( let d = 0 ; d < topPaths.length ; d++ )
     {
-      dirToFile[ dir ] = newPath
-    });
+      let dir = topPaths[ d ]
+      topToBottom[ dir ] = src;
+    }
   }
 
   debugger;
@@ -2140,7 +2176,7 @@ let Routines =
   trackToRoot, /* qqq : add basic test coverage */
   group,
   mapGroupByDst,
-  mapOptimal,
+  setOptimize,
 
 }
 

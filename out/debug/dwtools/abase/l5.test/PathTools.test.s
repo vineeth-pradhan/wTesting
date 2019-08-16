@@ -12593,18 +12593,18 @@ function group( test )
   var got = _.path.group( o );
   test.identical( got, expected )
 
-  // test.case = 'vals has inner arrays';
-  // var o =
-  // {
-  //   keys : [ '/' ],
-  //   vals : [ '.', '/a', '/b', './a', '/a/b' ]
-  // }
-  // var expected =
-  // {
-  //   '/' : [ '/a', '/b', '/a/b' ],
-  // }
-  // var got = _.path.group( o );
-  // test.identical( got, expected )
+  test.case = 'vals has inner arrays';
+  var o =
+  {
+    keys : [ '/' ],
+    vals : [ '.', '/a', '/b', './a', '/a/b' ]
+  }
+  var expected =
+  {
+    '/' : [ '/a', '/b', '/a/b' ],
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
 
   test.case = 'result is existing map'
   var o =
@@ -12649,6 +12649,46 @@ function groupExperiment( test )
 
 groupExperiment.experimental = 1;
 
+//
+
+function setOptimize( test )
+{
+  let path = _.path;
+
+  test.case = 'direct order';
+  var filePath =
+  {
+    "module1" : `.`,
+    "module1/ami" : `.`,
+    "module1/amid" : `.`,
+    "module1/amid/dir" : `.`,
+    "module1/amid/dir/terminal" : `.`,
+    "module1/amid/dir2" : `.`,
+    "module2" : `.`,
+    "module2/amid" : `.`,
+  }
+  var expected = [ 'module1', 'module2' ];
+  var got = path.setOptimize( filePath );
+  test.identical( got, expected );
+
+  test.case = 'revers order';
+  var filePath =
+  {
+    "module2/amid" : `.`,
+    "module2" : `.`,
+    "module1/amid/dir2" : `.`,
+    "module1/amid/dir/terminal" : `.`,
+    "module1/amid/dir" : `.`,
+    "module1/amid" : `.`,
+    "module1/ami" : `.`,
+    "module1" : `.`,
+  }
+  var expected = [ 'module1', 'module2' ];
+  var got = path.setOptimize( filePath );
+  test.identical( got, expected );
+
+}
+
 // --
 // declare
 // --
@@ -12685,6 +12725,7 @@ var Self =
     mapGroupByDst,
     group,
     groupExperiment,
+    // setOptimize,
 
   },
 
