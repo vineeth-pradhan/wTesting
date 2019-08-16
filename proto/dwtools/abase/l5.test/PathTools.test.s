@@ -12622,22 +12622,12 @@ function group( test )
   }
   var got = _.path.group( o );
   test.identical( got, expected )
-
-  if( !Config.debug )
-  return;
-
-  test.shouldThrowErrorSync( () => _.path.group({ vals : '/val', keys : '/' }))
-}
-
-// xxx
-
-function groupExperiment( test )
-{
+  
   test.case = 'vals has inner arrays';
   var o =
   {
     keys : [ '/' ],
-    vals : [ '.', [ '/a', '/b' ], [ './a', '/a/b' ] ] // Dmytro: need check
+    vals : [ '.', [ '/a', '/b' ], [ './a', '/a/b' ] ]
   }
   var expected =
   {
@@ -12645,9 +12635,28 @@ function groupExperiment( test )
   }
   var got = _.path.group( o );
   test.identical( got, expected )
-}
+  
+  test.case = 'keys as map';
+  var o =
+  {
+    keys : { '/a' : true, '/b' : true, '.' : true },
+    vals : [ '.', '/a', '/b', './a', '/a/b' ]
+  }
+  var expected =
+  {
+    '/' : [ '/a', '/b', '/a/b' ],
+    '/a' : [ '/a', '/a/b' ],
+    '/b' : [ '/b' ],
+    '.' : [ '.', './a' ]
+  }
+  var got = _.path.group( o );
+  test.identical( got, expected )
+  
+  if( !Config.debug )
+  return;
 
-groupExperiment.experimental = 1;
+  test.shouldThrowErrorSync( () => _.path.group({ vals : '/val', keys : '/' }))
+}
 
 //
 
@@ -12940,7 +12949,6 @@ var Self =
 
     mapGroupByDst,
     group,
-    groupExperiment,
     setOptimize,
 
   },

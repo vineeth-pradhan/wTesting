@@ -1924,12 +1924,14 @@ function group( o )
 
   o.result = o.result || Object.create( null );
   o.result[ '/' ] = o.result[ '/' ] || [];
-
-  o.keys = self.s.from( o.keys );
-  o.vals = self.s.from( o.vals );
-
-  let keys = self.mapSrcFromSrc( o.keys );
+  
   let vals = _.arrayFlattenOnce( null, o.vals );
+  let keys = o.keys;
+
+  keys = self.s.from( keys );
+  vals = self.s.from( vals );
+
+  keys = self.mapSrcFromSrc( keys );
 
   _.assert( _.arrayIs( keys ) );
   _.assert( _.arrayIs( vals ) );
